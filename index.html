@@ -109,14 +109,28 @@
             z-index: 10;
         }
 
-        /* Smooth marquee-like scroll for categories */
-        #featured-cats {
-            /* Removing CSS smooth scroll as it conflicts with JS set-interval auto-scrolling */
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        /* Enhanced Category Carousel Center Highlight */
+        .category-item > div, .category-item h4 {
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .center-active > div {
+            transform: scale(1.25) !important;
+            background-color: #15803d !important; /* primary */
+            border-color: #15803d !important;
+            box-shadow: 0 20px 25px -5px rgba(21, 128, 61, 0.3) !important;
+            z-index: 20;
+        }
+        .center-active > div i {
+            color: white !important;
+            transform: scale(1.1) !important;
+        }
+        .center-active h4 {
+            color: #15803d !important;
+            transform: scale(1.15);
+            font-weight: 800;
         }
 
-        /* Rich Text Formatting (For Quill.js Support) */
+        /* Rich Text Formatting */
         .rich-text h1 { font-size: 1.75em; font-weight: 800; margin-bottom: 0.5em; color: #1f2937; }
         .rich-text h2 { font-size: 1.5em; font-weight: 700; margin-bottom: 0.5em; color: #1f2937; }
         .rich-text h3 { font-size: 1.25em; font-weight: 600; margin-bottom: 0.5em; color: #374151; }
@@ -139,9 +153,7 @@
             <div class="absolute w-24 h-24 bg-primary/20 rounded-full animate-ping"></div>
             <div class="absolute w-32 h-32 bg-primary/10 rounded-full animate-pulse delay-150"></div>
             
-            <!-- Dynamic Short Logo -->
             <img id="loader-short-logo" src="" class="hidden relative w-20 h-20 object-contain animate-bounce drop-shadow-2xl rounded-2xl z-10" alt="Short Logo">
-            <!-- Default Icon Fallback -->
             <div id="loader-default-icon" class="relative w-16 h-16 bg-gradient-to-tr from-primary to-emerald-400 text-white rounded-2xl flex items-center justify-center font-bold text-3xl shadow-2xl animate-bounce z-10">
                 <i class="fa-solid fa-leaf"></i>
             </div>
@@ -150,7 +162,7 @@
         <p class="mt-1 text-gray-400 text-sm font-medium">প্রস্তুত হচ্ছে...</p>
     </div>
 
-    <!-- Smart Toast Notification (z-[9999] for top visibility) -->
+    <!-- Smart Toast Notification -->
     <div id="toast" class="fixed bottom-24 md:bottom-6 md:right-6 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-[9999] flex items-center gap-3 w-[92%] md:w-auto">
         <div id="toast-icon-container" class="p-1 rounded-full bg-emerald-500 text-white flex-shrink-0 flex items-center justify-center w-6 h-6">
             <i class="fa-solid fa-check text-xs"></i>
@@ -158,12 +170,11 @@
         <span id="toast-message" class="font-semibold text-sm">সফল হয়েছে!</span>
     </div>
 
-    <!-- UNIFIED HEADER (Non-sticky Header with Large Premium Logo) -->
+    <!-- UNIFIED HEADER -->
     <header class="glass-nav border-b border-emerald-100 shadow-sm w-full transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-7 flex justify-between items-center gap-4">
             
             <a href="#" onclick="window.scrollTo(0,0); return false;" class="flex items-center gap-3 sm:gap-5 cursor-pointer group shrink-0">
-                <!-- Clear Premium Big Logo -->
                 <img id="public-logo" src="" class="brand-logo hidden h-24 sm:h-28 md:h-32 lg:h-36 w-auto max-w-[300px] md:max-w-[400px] object-contain transition-transform group-hover:scale-105" alt="Logo">
                 <div class="brand-initial w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-primary text-white rounded-2xl flex items-center justify-center font-bold text-4xl sm:text-5xl md:text-6xl shadow-md transition-transform group-hover:scale-105">N</div>
                 <span id="brand-text" class="font-extrabold text-3xl sm:text-4xl md:text-6xl text-primary tracking-tight">Naisargik</span>
@@ -190,7 +201,6 @@
             </div>
         </div>
 
-        <!-- Mobile Search -->
         <div class="md:hidden px-4 pb-5">
             <div class="relative w-full group">
                 <input type="text" id="mobile-search" oninput="window.handleSearch(this.value)" placeholder="পছন্দের পণ্য খুঁজুন..." class="w-full pl-4 pr-10 py-3.5 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 focus:bg-white transition-all text-sm shadow-inner">
@@ -218,27 +228,27 @@
         </div>
     </section>
 
-    <!-- FEATURED CATEGORIES SECTION (Auto-Scrolling Circular Categories) -->
+    <!-- FEATURED CATEGORIES SECTION (Tick Carousel Loop) -->
     <section class="w-full max-w-7xl mx-auto mt-6 md:mt-10 mb-2 px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-3">
             <h3 class="text-xl md:text-3xl font-extrabold text-gray-900">জনপ্রিয় <span class="text-primary">ক্যাটাগরি</span></h3>
         </div>
         
-        <!-- Category Container with single line nowrap and auto scroll -->
-        <div class="relative overflow-hidden group">
+        <!-- Category Container with Overflow hidden for smooth tick loop -->
+        <div class="relative overflow-hidden group py-4">
             <!-- Left fade -->
-            <div class="absolute top-0 left-0 bottom-0 w-8 md:w-12 bg-gradient-to-r from-[#fafafa] to-transparent z-10 pointer-events-none"></div>
+            <div class="absolute top-0 left-0 bottom-0 w-8 md:w-16 bg-gradient-to-r from-[#fafafa] to-transparent z-10 pointer-events-none"></div>
             
-            <div id="featured-cats" class="flex gap-4 sm:gap-6 md:gap-10 overflow-x-auto scrollbar-hide py-2 flex-nowrap items-start cursor-pointer">
+            <div id="featured-cats" class="flex gap-4 sm:gap-6 md:gap-10 py-6 flex-nowrap items-center w-max">
                 <!-- Dynamically Rendered Circular Categories -->
             </div>
             
             <!-- Right fade -->
-            <div class="absolute top-0 right-0 bottom-0 w-8 md:w-12 bg-gradient-to-l from-[#fafafa] to-transparent z-10 pointer-events-none"></div>
+            <div class="absolute top-0 right-0 bottom-0 w-8 md:w-16 bg-gradient-to-l from-[#fafafa] to-transparent z-10 pointer-events-none"></div>
         </div>
     </section>
 
-    <!-- PRODUCT CATALOG SECTION (Premium Space Optimized with Mobile Mini-Filter Row) -->
+    <!-- PRODUCT CATALOG SECTION -->
     <section id="products-section" class="pt-8 pb-16 md:pt-12 md:pb-24 bg-emerald-50/30 flex-1 border-t border-emerald-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
@@ -248,15 +258,11 @@
                 <p data-field="collectionSubtitle" class="text-gray-600 max-w-md mx-auto text-sm md:text-base font-medium" id="product-section-subtitle">খাঁটি এবং প্রাকৃতিক খাবারের সেরা কালেকশন থেকে আপনার পছন্দের পণ্যটি বেছে নিন</p>
             </div>
 
-            <!-- Layout Wrapper: Flex container for Content -->
             <div class="flex flex-col lg:flex-row gap-6 md:gap-8 items-start w-full">
-
-                <!-- Products Grid & Sort Bar - Smart & Clear Design -->
                 <div class="flex-1 w-full min-w-0 flex flex-col gap-4">
                     
-                    <!-- Sort Bar -->
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 sm:pb-4 border-b border-gray-200/60 w-full">
-                        <div class="text-sm text-gray-500" id="search-result-text">
+                        <div class="text-sm text-gray-500 flex flex-wrap items-center gap-1" id="search-result-text">
                             <span id="product-count" class="font-bold text-gray-800">0</span> items found
                         </div>
                         
@@ -313,46 +319,47 @@
         </div>
     </section>
 
-    <!-- PRODUCT DETAILS MODAL -->
-    <div id="product-details-overlay" class="fixed inset-0 bg-black/70 z-[80] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm" onclick="window.closeProductModal()"></div>
-    <div id="product-details-modal" class="fixed inset-0 z-[90] hidden flex items-center justify-center p-4 md:p-6 pointer-events-none">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto overflow-x-hidden transform scale-95 transition-all duration-300 pointer-events-auto relative flex flex-col md:flex-row">
-            
-            <!-- Close Button -->
-            <button onclick="window.closeProductModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-500 rounded-full flex items-center justify-center transition-colors z-20">
-                <i class="fa-solid fa-xmark text-lg"></i>
+    <!-- PRODUCT DETAILS FULL PAGE VIEW -->
+    <div id="product-details-page" class="fixed inset-0 z-[150] bg-white hidden overflow-y-auto transition-opacity duration-300 opacity-0 flex-col">
+        <div class="sticky top-0 bg-white/95 backdrop-blur-md z-[60] border-b border-gray-100 px-4 py-3 flex items-center justify-between shadow-sm">
+            <button onclick="window.closeProductModal()" class="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors font-bold">
+                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-emerald-50"><i class="fa-solid fa-arrow-left"></i></div>
+                <span class="hidden sm:block">ফিরে যান</span>
             </button>
+            <h2 class="font-extrabold text-lg text-gray-800 absolute left-1/2 -translate-x-1/2 w-1/2 text-center truncate">পণ্যের বিস্তারিত</h2>
+            <button onclick="window.closeProductModal(true); window.openCart();" class="relative p-2 text-primary hover:bg-emerald-50 rounded-xl transition-all flex items-center justify-center w-10 h-10">
+                <i class="fa-solid fa-bag-shopping text-xl"></i>
+                <span id="page-cart-count" class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+            </button>
+        </div>
 
-            <!-- Image Section -->
-            <div class="w-full md:w-1/2 bg-gray-50 flex items-center justify-center p-8 border-b md:border-b-0 md:border-r border-gray-100">
-                <img id="modal-product-img" src="" alt="Product" class="w-full h-auto max-h-[300px] md:max-h-[500px] object-contain drop-shadow-xl">
+        <div class="w-full max-w-7xl mx-auto flex flex-col md:flex-row p-4 sm:p-6 lg:p-10 gap-6 lg:gap-12 relative flex-1">
+            <div class="w-full md:w-1/2 md:sticky md:top-24 h-max">
+                <div class="w-full aspect-square relative rounded-3xl overflow-hidden shadow-md bg-[#f8fafc] border border-gray-100 flex items-center justify-center group">
+                    <img id="modal-product-img" src="" alt="Product" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                </div>
             </div>
 
-            <!-- Content Section -->
-            <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-start overflow-y-auto">
+            <div class="w-full md:w-1/2 flex flex-col justify-start pb-20 md:pb-0">
                 <span id="modal-product-category" class="text-xs font-extrabold tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg w-max mb-4 uppercase">Category</span>
-                <h2 id="modal-product-title" class="text-2xl md:text-3xl font-black text-gray-900 mb-4 leading-tight">Product Title</h2>
+                <h2 id="modal-product-title" class="text-3xl md:text-4xl font-black text-gray-900 mb-4 leading-tight">Product Title</h2>
                 
                 <div class="flex items-center gap-4 mb-6">
-                    <span id="modal-product-price" class="text-3xl font-black text-primary">৳ 0</span>
-                    <span id="modal-product-regular-price" class="text-lg text-gray-400 line-through font-medium hidden">৳ 0</span>
+                    <span id="modal-product-price" class="text-4xl font-black text-primary">৳ 0</span>
+                    <span id="modal-product-regular-price" class="text-xl text-gray-400 line-through font-medium hidden">৳ 0</span>
                 </div>
 
-                <!-- Variants Container -->
-                <div id="modal-variants-container" class="hidden mb-6">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">পরিমাণ নির্বাচন করুন:</label>
-                    <div id="modal-variants-options" class="flex flex-wrap gap-2">
-                        <!-- Variants will be injected here -->
+                <div id="modal-variants-container" class="hidden mb-8">
+                    <label class="block text-sm font-bold text-gray-700 mb-3">পরিমাণ নির্বাচন করুন:</label>
+                    <div id="modal-variants-options" class="flex flex-wrap gap-3">
                     </div>
                 </div>
 
-                <!-- Rich Text Description Support Container -->
-                <div id="modal-product-desc" class="rich-text text-sm md:text-base text-gray-600 mb-8 font-medium leading-relaxed">
-                    <!-- বিবরণ এখানে রেন্ডার হবে -->
+                <div id="modal-product-desc" class="rich-text text-sm md:text-base text-gray-600 mb-10 font-medium leading-relaxed">
                 </div>
 
-                <div class="mt-auto pb-4">
-                    <button id="modal-add-to-cart-btn" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 rounded-xl shadow-xl shadow-emerald-600/20 transition-transform transform hover:scale-[1.02] flex justify-center items-center gap-3 text-lg">
+                <div class="mt-auto">
+                    <button id="modal-add-to-cart-btn" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 rounded-2xl shadow-xl shadow-emerald-600/20 transition-transform transform hover:scale-[1.02] flex justify-center items-center gap-3 text-lg">
                         <i class="fa-solid fa-basket-shopping"></i> কার্টে যোগ করুন
                     </button>
                 </div>
@@ -387,10 +394,8 @@
                 </a>
                 <p data-field="footerAbout" id="public-footer-about" class="text-sm leading-relaxed font-medium text-gray-400 max-w-sm">প্রকৃতির খাঁটি স্বাদ, পৌঁছে যাবে আপনার দুয়ারে। সেরা মানের পণ্য দিয়ে আপনাদের সেবা করাই আমাদের মূল লক্ষ্য।</p>
                 
-                <!-- Dynamic Social Links -->
                 <div class="relative">
                     <div id="social-links-container" class="flex flex-wrap gap-4 items-center">
-                        <!-- Rendered dynamically -->
                     </div>
                 </div>
             </div>
@@ -409,11 +414,9 @@
                 </ul>
             </div>
 
-            <!-- Dynamic Useful Links -->
             <div>
                 <h4 class="text-lg font-bold text-white mb-6 flex items-center gap-2"><i class="fa-solid fa-handshake text-primary"></i> প্রয়োজনীয় লিংক</h4>
                 <ul id="useful-links-container" class="space-y-3 text-sm font-medium">
-                    <!-- Rendered dynamically -->
                 </ul>
             </div>
         </div>
@@ -446,7 +449,7 @@
         </div>
     </div>
 
-    <!-- Alert Modal (z-[9999] for top visibility) -->
+    <!-- Alert Modal -->
     <div id="public-alert-modal-overlay" class="fixed inset-0 bg-black/60 z-[9998] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm" onclick="window.closeAlertModal()"></div>
     <div id="public-alert-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none">
         <div id="public-alert-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col transform scale-95 transition-all duration-300 pointer-events-auto p-8 text-center">
@@ -457,7 +460,7 @@
         </div>
     </div>
 
-    <!-- FIREBASE SDKS & LOGIC (PURE CLIENT MODE) -->
+    <!-- FIREBASE SDKS & LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -485,16 +488,26 @@
         let cart = [];
         let currentSlide = 0;
         let slideInterval;
-        let catScrollInterval;
         let currentModalProduct = null;
         let selectedVariant = null;
 
-        // Default Homepage Data
+        // Carousel variables
+        let catScrollInterval;
+        let isTicking = false;
+
         let homepageData = {
             sliderImages: [],
             featuredCategories: [],
             usefulLinks: [],
             socialLinks: []
+        };
+
+        window.safePushState = function(url) {
+            try {
+                window.history.pushState(null, '', url);
+            } catch (e) {
+                console.warn("History pushState bypassed due to security context.");
+            }
         };
 
         window.showNotification = function(message, isError = false) {
@@ -520,7 +533,6 @@
         function initRealtimeListeners() {
             if(!db) return;
 
-            // General Settings Listener (Logo & Branding)
             onSnapshot(doc(db, "settings", "general"), (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.data();
@@ -557,7 +569,6 @@
                 }
             });
 
-            // Homepage CMS Listener (Sliders, Categories, Texts, Links)
             onSnapshot(doc(db, "settings", "homepage"), (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.data();
@@ -567,7 +578,6 @@
                     if(data.socialLinks) homepageData.socialLinks = data.socialLinks;
                     homepageData = { ...homepageData, ...data };
                     
-                    // Update Text Fields Dynamically
                     document.querySelectorAll('[data-field]').forEach(el => {
                         const field = el.getAttribute('data-field');
                         if(homepageData[field]) el.innerText = homepageData[field];
@@ -578,7 +588,6 @@
                 renderFooterLinks();
             });
 
-            // Products Listener
             let isFirstLoad = true;
             onSnapshot(collection(db, "products"), (snapshot) => {
                 allProducts = [];
@@ -606,7 +615,6 @@
             });
         }
 
-        // Hero Slider Logic
         function renderSlider() {
             const track = document.getElementById('slider-track');
             const dotsContainer = document.getElementById('slider-dots');
@@ -647,11 +655,13 @@
         function startSlideTimer() { slideInterval = setInterval(window.nextSlide, 5000); }
 
 
-        // Circular Categories Auto-Scroll Logic
+        // --- Update: Analog Tick Infinite Loop Logic ---
         function renderFeaturedCategories() {
             const container = document.getElementById('featured-cats');
             container.innerHTML = '';
             stopCategoryScroll(); 
+
+            let baseHtml = '';
 
             if(homepageData.featuredCategories) {
                 homepageData.featuredCategories.forEach(cat => {
@@ -662,9 +672,9 @@
                         imgHtml = `<i class="${cat.image || 'fa-solid fa-leaf'} text-2xl md:text-3xl text-emerald-600 group-hover:text-white transition-colors"></i>`;
                     }
 
-                    container.innerHTML += `
-                        <div class="shrink-0 w-16 sm:w-20 md:w-28 group text-center relative px-1 sm:px-2">
-                            <div onclick="window.filterCategory('${cat.name}')" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mx-auto bg-emerald-50 rounded-full flex items-center justify-center mb-2 md:mb-3 shadow-sm border-[1.5px] md:border-2 border-emerald-100 group-hover:bg-primary group-hover:border-primary group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105 cursor-pointer relative overflow-hidden">
+                    baseHtml += `
+                        <div class="shrink-0 w-16 sm:w-20 md:w-28 group text-center relative px-1 sm:px-2 cursor-pointer category-item" onclick="window.filterCategory('${cat.name}')">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mx-auto bg-emerald-50 rounded-full flex items-center justify-center mb-2 md:mb-3 shadow-sm border-[1.5px] md:border-2 border-emerald-100 group-hover:bg-primary group-hover:border-primary group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105 relative overflow-hidden z-10">
                                 ${imgHtml}
                             </div>
                             <h4 class="font-bold text-gray-700 text-[10px] sm:text-xs md:text-sm group-hover:text-primary transition-colors whitespace-normal leading-tight">${cat.name}</h4>
@@ -673,28 +683,106 @@
                 });
             }
 
+            // Tripled to ensure the infinite visual loop covers all large screen sizes without snapping glitches
+            container.innerHTML = baseHtml + baseHtml + baseHtml;
+
             setTimeout(startCategoryScroll, 500);
         }
 
         function startCategoryScroll() {
+            stopCategoryScroll();
             const container = document.getElementById('featured-cats');
-            if(!container || container.scrollWidth <= container.clientWidth) return;
-            
-            clearInterval(catScrollInterval); // Always clear previous interval
-            
-            catScrollInterval = setInterval(() => {
-                // Ignore scroll when user hovers or touches
-                if(container.matches(':hover') || container.matches(':active')) return; 
-                
-                container.scrollLeft += 1;
-                
-                // Use Math.ceil to handle fractional pixel scrolling issues on mobile
-                if(Math.ceil(container.scrollLeft) >= (container.scrollWidth - container.clientWidth)) {
-                    container.scrollLeft = 0; // Reset smoothly
-                }
-            }, 25);
+            if(!container) return;
+
+            highlightCenterItem();
+
+            // Tick like a clock hand every 1.5 seconds
+            catScrollInterval = setInterval(tickCategory, 1500);
         }
-        function stopCategoryScroll() { clearInterval(catScrollInterval); }
+
+        function stopCategoryScroll() {
+            clearInterval(catScrollInterval);
+        }
+
+        function tickCategory() {
+            if(isTicking) return;
+            const container = document.getElementById('featured-cats');
+            if(!container || container.matches(':hover') || container.children.length < 3) return;
+
+            isTicking = true;
+            const firstChild = container.firstElementChild;
+            const itemWidth = firstChild.offsetWidth;
+            const gap = parseFloat(window.getComputedStyle(container).gap) || 0;
+            const moveAmount = itemWidth + gap;
+
+            // NEW LOGIC: Smoothly transfer highlight synchronously to prevent double shifting
+            const currentCenter = container.querySelector('.center-active');
+            if(currentCenter && currentCenter.nextElementSibling) {
+                currentCenter.classList.remove('center-active');
+                currentCenter.nextElementSibling.classList.add('center-active');
+            } else {
+                highlightCenterItem();
+            }
+
+            // Bouncy clock tick animation
+            container.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'; 
+            container.style.transform = `translateX(-${moveAmount}px)`;
+
+            const onTransitionEnd = (e) => {
+                if (e.target !== container) return;
+                container.style.transition = 'none';
+                container.appendChild(firstChild); 
+                container.style.transform = 'translateX(0)';
+                isTicking = false;
+                
+                // Final check to ensure robust centering after shifting elements
+                highlightCenterItem();
+                
+                container.removeEventListener('transitionend', onTransitionEnd);
+            };
+            container.addEventListener('transitionend', onTransitionEnd);
+            
+            // Failsafe for frozen tabs
+            setTimeout(() => {
+                if(isTicking) {
+                    container.style.transition = 'none';
+                    container.appendChild(firstChild);
+                    container.style.transform = 'translateX(0)';
+                    isTicking = false;
+                    highlightCenterItem();
+                    container.removeEventListener('transitionend', onTransitionEnd);
+                }
+            }, 600);
+        }
+
+        function highlightCenterItem() {
+            const container = document.getElementById('featured-cats');
+            if(!container) return;
+
+            const wrapper = container.parentElement;
+            const wrapperRect = wrapper.getBoundingClientRect();
+            const wrapperCenter = wrapperRect.left + wrapperRect.width / 2;
+
+            let closestItem = null;
+            let minDistance = Infinity;
+
+            Array.from(container.children).forEach(item => {
+                item.classList.remove('center-active');
+                const rect = item.getBoundingClientRect();
+                const itemCenter = rect.left + rect.width / 2;
+                const distance = Math.abs(wrapperCenter - itemCenter);
+                
+                if(distance < minDistance) {
+                    minDistance = distance;
+                    closestItem = item;
+                }
+            });
+
+            if(closestItem) {
+                closestItem.classList.add('center-active');
+            }
+        }
+        // --- End of Carousel Logic Update ---
 
         // Products, Advanced Filter and Search
         window.handleSearch = function(query) {
@@ -715,7 +803,7 @@
             const subtitle = document.getElementById('product-section-subtitle');
             if(!container) return;
 
-            const filterPriceVal = document.getElementById('filter-price')?.value || 'all';
+            const filterPriceVal = document.getElementById('filter-[#filter-price]')?.value || 'all';
             const filterSortVal = document.getElementById('filter-sort')?.value || 'default';
 
             let filtered = activeCategory === 'all' ? allProducts : allProducts.filter(p => p.category === activeCategory);
@@ -737,11 +825,15 @@
 
             const resultText = document.getElementById('search-result-text');
             if (resultText) {
+                let clearBtnHtml = (searchQuery || activeCategory !== 'all') 
+                    ? `<button onclick="window.filterCategory('all'); document.getElementById('desktop-search').value=''; document.getElementById('mobile-search').value='';" class="ml-2 inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-white hover:bg-primaryHover rounded-full text-[10px] sm:text-xs font-bold transition-colors cursor-pointer shadow-sm"><i class="fa-solid fa-border-all"></i> সকল পণ্য</button>` 
+                    : '';
+
                 if (searchQuery) {
-                    resultText.innerHTML = `<span class="font-bold text-gray-800">${filtered.length}</span> items found for <span class="text-gray-800 font-medium">"${searchQuery}"</span>`;
+                    resultText.innerHTML = `<span class="font-bold text-gray-800">${filtered.length}</span> items found for <span class="text-gray-800 font-medium">"${searchQuery}"</span> ${clearBtnHtml}`;
                 } else {
                     let catText = activeCategory === 'all' ? 'All products' : activeCategory;
-                    resultText.innerHTML = `<span class="font-bold text-gray-800">${filtered.length}</span> items found for <span class="text-gray-800 font-medium">"${catText}"</span>`;
+                    resultText.innerHTML = `<span class="font-bold text-gray-800">${filtered.length}</span> items found for <span class="text-gray-800 font-medium">"${catText}"</span> ${clearBtnHtml}`;
                 }
             }
 
@@ -766,7 +858,6 @@
                     <div onclick="window.openProductModal('${product.id}')" class="product-card bg-white rounded-2xl overflow-hidden flex flex-col relative group cursor-pointer border border-gray-100/80 ${isOutOfStock ? 'opacity-80' : ''}">
                         ${isOutOfStock ? `<div class="absolute top-2 md:top-3 left-2 md:left-3 bg-red-600/90 backdrop-blur text-white text-[9px] md:text-[10px] font-black px-2 py-1 md:px-3 md:py-1.5 rounded-full z-10 shadow-sm uppercase">স্টক শেষ</div>` : ''}
                         
-                        <!-- Premium Aspect Ratio 1:1 Image Section with Hover Zoom -->
                         <div class="relative aspect-square w-full bg-[#f8fafc] group-hover:bg-[#f1f5f9] transition-colors flex items-center justify-center overflow-hidden">
                             <img src="${imgUrl}" alt="${product.name}" class="product-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Product'">
                             <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -787,7 +878,7 @@
                                 <button onclick="${product.variants && product.variants.length > 0 ? `window.openProductModal('${product.id}')` : `window.addProductToCart('${product.id}')`}" 
                                     class="w-full ${isOutOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-emerald-50 hover:bg-primary text-primary hover:text-white'} font-bold py-2 md:py-2.5 rounded-xl transition-all text-xs md:text-sm flex justify-center items-center gap-2 group/btn"
                                     ${isOutOfStock ? 'disabled' : ''}>
-                                    <i class="fa-solid ${product.variants && product.variants.length > 0 ? 'fa-eye' : 'fa-basket-shopping'} ${isOutOfStock ? '' : 'group-hover/btn:-translate-y-0.5 transition-transform'}"></i> <span>${isOutOfStock ? 'স্টক শেষ' : (product.variants && product.variants.length > 0 ? 'অপশন দেখুন' : 'কার্টে যোগ করুন')}</span>
+                                    <i class="fa-solid fa-basket-shopping ${isOutOfStock ? '' : 'group-hover/btn:-translate-y-0.5 transition-transform'}"></i> <span>${isOutOfStock ? 'স্টক শেষ' : 'কার্টে যোগ করুন'}</span>
                                 </button>
                             </div>
                         </div>
@@ -796,7 +887,6 @@
             }).join('');
         }
 
-        // Product Details Modal
         window.openProductModal = (id, skipHistory = false) => {
             const product = allProducts.find(p => p.id === id);
             if(!product) return;
@@ -848,32 +938,34 @@
                 btn.onclick = null;
             } else {
                 btn.innerHTML = `<i class="fa-solid fa-basket-shopping"></i> কার্টে যোগ করুন`;
-                btn.className = "w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 rounded-xl shadow-xl shadow-emerald-600/20 transition-transform transform hover:scale-[1.02] flex justify-center items-center gap-3 text-lg";
-                btn.onclick = () => { window.addModalProductToCart(); window.closeProductModal(); };
+                btn.className = "w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 rounded-2xl shadow-xl shadow-emerald-600/20 transition-transform transform hover:scale-[1.02] flex justify-center items-center gap-3 text-lg";
+                btn.onclick = () => { window.closeProductModal(true); window.addModalProductToCart(); };
             }
 
-            const modal = document.getElementById('product-details-modal');
-            const overlay = document.getElementById('product-details-overlay');
-            overlay.classList.remove('hidden');
-            modal.classList.remove('hidden');
+            const page = document.getElementById('product-details-page');
+            document.body.style.overflow = 'hidden'; 
+            page.classList.remove('hidden');
+            page.classList.add('flex');
+            page.scrollTo(0, 0); 
             setTimeout(() => {
-                overlay.classList.remove('opacity-0'); overlay.classList.add('opacity-100');
-                modal.firstElementChild.classList.remove('scale-95'); modal.firstElementChild.classList.add('scale-100');
+                page.classList.remove('opacity-0'); 
+                page.classList.add('opacity-100');
             }, 10);
             
             if (skipHistory !== true) {
-                window.history.pushState(null, '', `#product-${id}`);
+                window.safePushState(`#product-${id}`);
             }
         };
 
         window.closeProductModalUI = () => {
-            const modal = document.getElementById('product-details-modal');
-            if(modal.classList.contains('hidden')) return;
-            const overlay = document.getElementById('product-details-overlay');
-            overlay.classList.remove('opacity-100'); overlay.classList.add('opacity-0');
-            modal.firstElementChild.classList.remove('scale-100'); modal.firstElementChild.classList.add('scale-95');
+            const page = document.getElementById('product-details-page');
+            if(page.classList.contains('hidden')) return;
+            page.classList.remove('opacity-100'); 
+            page.classList.add('opacity-0');
             setTimeout(() => {
-                overlay.classList.add('hidden'); modal.classList.add('hidden');
+                page.classList.add('hidden'); 
+                page.classList.remove('flex');
+                document.body.style.overflow = ''; 
             }, 300);
         };
 
@@ -929,11 +1021,10 @@
 
             if (skipHistory !== true) {
                 const hash = catName === 'all' ? '' : `#category-${encodeURIComponent(catName)}`;
-                window.history.pushState(null, '', hash || window.location.pathname + window.location.search);
+                window.safePushState(hash || window.location.pathname + window.location.search);
             }
         }
 
-        // Dynamic Footer Links Rendering
         function renderFooterLinks() {
             const useContainer = document.getElementById('useful-links-container');
             const socContainer = document.getElementById('social-links-container');
@@ -954,7 +1045,6 @@
             `).join('');
         }
 
-        // Cart Logic
         window.openCart = (skipHistory = false) => { 
             document.getElementById('cart-drawer-overlay').classList.remove('hidden'); 
             document.getElementById('cart-drawer').classList.remove('hidden'); 
@@ -965,7 +1055,7 @@
             }, 50); 
             
             if (skipHistory !== true) {
-                window.history.pushState(null, '', '#cart');
+                window.safePushState('#cart');
             }
         };
 
@@ -999,11 +1089,12 @@
         window.updateQty = (cartItemId, delta) => { const idx = cart.findIndex(item => item.id === cartItemId); if (idx > -1) { cart[idx].quantity += delta; if (cart[idx].quantity <= 0) cart.splice(idx, 1); updateCartUI(); } };
         window.removeCartItem = (cartItemId) => { cart = cart.filter(item => item.id !== cartItemId); updateCartUI(); };
 
-        // Cart Drawer Update
         function updateCartUI() {
             const cartCountBadge = document.getElementById('cart-count');
+            const pageCartCountBadge = document.getElementById('page-cart-count');
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             cartCountBadge.innerText = totalCount;
+            if(pageCartCountBadge) pageCartCountBadge.innerText = totalCount;
             const container = document.getElementById('cart-content-area');
             let total = 0;
             if (cart.length === 0) { container.innerHTML = `<div class="text-center text-gray-500 py-16"><p class="font-bold">আপনার শপিং কার্ট খালি আছে।</p></div>`; document.getElementById('cart-total').innerText = `৳ ০`; return; }
@@ -1079,7 +1170,6 @@
             setTimeout(() => { overlay.classList.add('hidden'); modal.classList.add('hidden'); }, 300);
         };
 
-        // History Navigation Listener
         window.addEventListener('popstate', (e) => {
             const hash = window.location.hash;
             if (hash === '#cart') {
@@ -1101,7 +1191,6 @@
             }
         });
 
-        // Initialize Application
         initRealtimeListeners();
     </script>
 </body>
