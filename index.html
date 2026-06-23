@@ -77,6 +77,7 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #15803d; border-radius: 10px; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         
         /* Blur background glass effect */
         .glass-nav { 
@@ -334,12 +335,18 @@
         </div>
 
         <div class="w-full max-w-7xl mx-auto flex flex-col md:flex-row p-4 sm:p-6 lg:p-10 gap-6 lg:gap-12 relative flex-1">
-            <div class="w-full md:w-1/2 md:sticky md:top-24 h-max">
+            <!-- Image Gallery Area -->
+            <div class="w-full md:w-1/2 md:sticky md:top-24 h-max flex flex-col gap-3">
                 <div class="w-full aspect-square relative rounded-3xl overflow-hidden shadow-md bg-[#f8fafc] border border-gray-100 flex items-center justify-center group">
-                    <img id="modal-product-img" src="" alt="Product" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    <img id="modal-main-img" src="" alt="Product" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                </div>
+                <!-- Thumbnails Container -->
+                <div id="modal-thumbnails" class="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide hidden">
+                    <!-- Dynamically loaded thumbnails -->
                 </div>
             </div>
 
+            <!-- Details Area -->
             <div class="w-full md:w-1/2 flex flex-col justify-start pb-20 md:pb-0">
                 <span id="modal-product-category" class="text-xs font-extrabold tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg w-max mb-4 uppercase">Category</span>
                 <h2 id="modal-product-title" class="text-3xl md:text-4xl font-black text-gray-900 mb-4 leading-tight">Product Title</h2>
@@ -851,7 +858,8 @@
             }
 
             container.innerHTML = filtered.map(product => {
-                const imgUrl = product.imageUrl || "https://placehold.co/400x400/e2e8f0/64748b?text=Product";
+                // Ensure to use the first image from array if available
+                const imgUrl = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : (product.imageUrl || "https://placehold.co/400x400/e2e8f0/64748b?text=Product");
                 const isOutOfStock = product.stockStatus === 'Out of Stock';
                 
                 return `
@@ -887,6 +895,21 @@
             }).join('');
         }
 
+        // Functions for multi-image gallery interaction
+        window.setModalMainImage = function(url, activeIdx) {
+            document.getElementById('modal-main-img').src = url;
+            const buttons = document.querySelectorAll('.thumb-btn');
+            buttons.forEach((btn, idx) => {
+                if(idx === activeIdx) {
+                    btn.classList.add('border-primary', 'shadow-md');
+                    btn.classList.remove('border-transparent', 'hover:border-emerald-200');
+                } else {
+                    btn.classList.remove('border-primary', 'shadow-md');
+                    btn.classList.add('border-transparent', 'hover:border-emerald-200');
+                }
+            });
+        };
+
         window.openProductModal = (id, skipHistory = false) => {
             const product = allProducts.find(p => p.id === id);
             if(!product) return;
@@ -894,7 +917,26 @@
             currentModalProduct = product;
             selectedVariant = null;
 
-            document.getElementById('modal-product-img').src = product.imageUrl || "https://placehold.co/400x400/e2e8f0/64748b?text=Product";
+            // Handle Multiple Images
+            const images = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls : [product.imageUrl || "https://placehold.co/400x400/e2e8f0/64748b?text=Product"];
+            
+            // Set Main Image
+            document.getElementById('modal-main-img').src = images[0];
+            
+            // Generate Thumbnails
+            const thumbContainer = document.getElementById('modal-thumbnails');
+            if (images.length > 1) {
+                thumbContainer.innerHTML = images.map((img, idx) => `
+                    <button onclick="window.setModalMainImage('${img}', ${idx})" class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden border-2 transition-all ${idx === 0 ? 'border-primary shadow-md' : 'border-transparent hover:border-emerald-200'} thumb-btn">
+                        <img src="${img}" class="w-full h-full object-cover">
+                    </button>
+                `).join('');
+                thumbContainer.classList.remove('hidden');
+            } else {
+                thumbContainer.classList.add('hidden');
+                thumbContainer.innerHTML = '';
+            }
+
             document.getElementById('modal-product-title').innerText = product.name;
             document.getElementById('modal-product-category').innerText = product.category || 'অর্গানিক';
             
@@ -987,6 +1029,9 @@
             let cartItemId = currentModalProduct.id;
             let cartItemName = currentModalProduct.name;
             let cartItemPrice = Number(currentModalProduct.price);
+            
+            // Get correct image for cart
+            let cartItemImage = (currentModalProduct.imageUrls && currentModalProduct.imageUrls.length > 0) ? currentModalProduct.imageUrls[0] : currentModalProduct.imageUrl;
 
             if(selectedVariant) {
                 cartItemId = `${currentModalProduct.id}-${selectedVariant.weight}`;
@@ -996,7 +1041,7 @@
 
             const existing = cart.find(item => item.id === cartItemId);
             if (existing) existing.quantity++;
-            else cart.push({ id: cartItemId, name: cartItemName, price: cartItemPrice, image: currentModalProduct.imageUrl, quantity: 1, baseProductId: currentModalProduct.id });
+            else cart.push({ id: cartItemId, name: cartItemName, price: cartItemPrice, image: cartItemImage, quantity: 1, baseProductId: currentModalProduct.id });
             
             updateCartUI(); window.openCart(); window.showNotification("কার্টে যুক্ত করা হয়েছে!");
         };
@@ -1082,10 +1127,15 @@
             const product = allProducts.find(p => p.id === productId);
             if (!product) return;
             const existing = cart.find(item => item.id === productId);
-            if (existing) existing.quantity++;
-            else cart.push({ id: product.id, name: product.name, price: Number(product.price), image: product.imageUrl, quantity: 1 });
+            if (existing) {
+                existing.quantity++;
+            } else {
+                let cartItemImage = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : product.imageUrl;
+                cart.push({ id: product.id, name: product.name, price: Number(product.price), image: cartItemImage, quantity: 1 });
+            }
             updateCartUI(); window.openCart(); window.showNotification("কার্টে যুক্ত করা হয়েছে!");
         };
+        
         window.updateQty = (cartItemId, delta) => { const idx = cart.findIndex(item => item.id === cartItemId); if (idx > -1) { cart[idx].quantity += delta; if (cart[idx].quantity <= 0) cart.splice(idx, 1); updateCartUI(); } };
         window.removeCartItem = (cartItemId) => { cart = cart.filter(item => item.id !== cartItemId); updateCartUI(); };
 
