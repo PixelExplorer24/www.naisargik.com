@@ -87,13 +87,13 @@
 
         /* Improved Product Card */
         .product-card {
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 2px 10px -3px rgba(0, 0, 0, 0.05);
         }
         .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 25px -5px rgba(21, 128, 61, 0.12), 0 8px 10px -6px rgba(21, 128, 61, 0.05);
-            border-color: rgba(21, 128, 61, 0.2);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(21, 128, 61, 0.15), 0 10px 10px -5px rgba(21, 128, 61, 0.04);
+            border-color: rgba(21, 128, 61, 0.25);
         }
 
         /* Slider Animations */
@@ -111,7 +111,9 @@
 
         /* Smooth marquee-like scroll for categories */
         #featured-cats {
-            scroll-behavior: smooth;
+            /* Removing CSS smooth scroll as it conflicts with JS set-interval auto-scrolling */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         /* Rich Text Formatting (For Quill.js Support) */
@@ -678,13 +680,19 @@
             const container = document.getElementById('featured-cats');
             if(!container || container.scrollWidth <= container.clientWidth) return;
             
+            clearInterval(catScrollInterval); // Always clear previous interval
+            
             catScrollInterval = setInterval(() => {
-                if(container.matches(':hover')) return; 
+                // Ignore scroll when user hovers or touches
+                if(container.matches(':hover') || container.matches(':active')) return; 
+                
                 container.scrollLeft += 1;
-                if(container.scrollLeft >= (container.scrollWidth - container.clientWidth - 1)) {
-                    container.scrollLeft = 0;
+                
+                // Use Math.ceil to handle fractional pixel scrolling issues on mobile
+                if(Math.ceil(container.scrollLeft) >= (container.scrollWidth - container.clientWidth)) {
+                    container.scrollLeft = 0; // Reset smoothly
                 }
-            }, 30);
+            }, 25);
         }
         function stopCategoryScroll() { clearInterval(catScrollInterval); }
 
@@ -758,8 +766,10 @@
                     <div onclick="window.openProductModal('${product.id}')" class="product-card bg-white rounded-2xl overflow-hidden flex flex-col relative group cursor-pointer border border-gray-100/80 ${isOutOfStock ? 'opacity-80' : ''}">
                         ${isOutOfStock ? `<div class="absolute top-2 md:top-3 left-2 md:left-3 bg-red-600/90 backdrop-blur text-white text-[9px] md:text-[10px] font-black px-2 py-1 md:px-3 md:py-1.5 rounded-full z-10 shadow-sm uppercase">স্টক শেষ</div>` : ''}
                         
-                        <div class="relative h-36 sm:h-48 md:h-52 w-full p-4 flex items-center justify-center bg-[#f8fafc] group-hover:bg-[#f1f5f9] transition-colors">
-                            <img src="${imgUrl}" alt="${product.name}" class="product-img w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Product'">
+                        <!-- Premium Aspect Ratio 1:1 Image Section with Hover Zoom -->
+                        <div class="relative aspect-square w-full bg-[#f8fafc] group-hover:bg-[#f1f5f9] transition-colors flex items-center justify-center overflow-hidden">
+                            <img src="${imgUrl}" alt="${product.name}" class="product-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Product'">
+                            <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </div>
 
                         <div class="p-3.5 sm:p-4 md:p-5 flex-1 flex flex-col bg-white">
