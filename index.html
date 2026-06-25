@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Naisargik - প্রিমিয়াম অর্গানিক শপ</title>
     
     <!-- PWA & Service Worker Meta Tags -->
@@ -61,12 +61,43 @@
     </script>
 
     <style>
+        /* --- NATIVE APP-LIKE SMOOTHNESS OPTIMIZATIONS --- */
+        * {
+            -webkit-tap-highlight-color: transparent !important; /* Removes default touch highlight */
+            touch-action: manipulation; /* Removes 300ms tap delay */
+        }
+        
         body { 
             font-family: 'Hind Siliguri', sans-serif; 
             background-color: #fafafa; 
             scroll-behavior: smooth; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior-y: none; /* Prevents pull-to-refresh bounce on desktop browsers */
         }
-        
+
+        /* Prevent text/image selection on interactive elements to feel like a real app */
+        button, a, .product-card, .category-item, img, .pub-logo-img, .slide-item {
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        /* Hardware acceleration for ultra-smooth animations */
+        .transition-all, .transition-transform, .product-card, .slide-item, #featured-cats, .category-item > div {
+            will-change: transform, opacity;
+            transform: translateZ(0); /* Force GPU Rendering */
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        /* Momentum scrolling for iOS and smooth scroll for all overflow areas */
+        .overflow-y-auto, .overflow-x-auto, .scrollbar-hide {
+            -webkit-overflow-scrolling: touch !important;
+            scroll-behavior: smooth;
+        }
+        /* ------------------------------------------------ */
+
         /* Custom Loader */
         .loader {
             border: 4px solid #f3f3f3;
@@ -98,7 +129,7 @@
             box-shadow: 0 2px 10px -3px rgba(0, 0, 0, 0.05);
         }
         .product-card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-6px) translateZ(0);
             box-shadow: 0 20px 25px -5px rgba(21, 128, 61, 0.15), 0 10px 10px -5px rgba(21, 128, 61, 0.04);
             border-color: rgba(21, 128, 61, 0.25);
         }
@@ -107,21 +138,21 @@
         .slide-item {
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
             opacity: 0;
-            transform: scale(1.05);
+            transform: scale(1.05) translateZ(0);
             z-index: 0;
         }
         .slide-item.active {
             opacity: 1;
-            transform: scale(1);
+            transform: scale(1) translateZ(0);
             z-index: 10;
         }
 
         /* Enhanced Category Carousel Center Highlight */
         .category-item > div, .category-item h4 {
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s, box-shadow 0.3s;
         }
         .center-active > div {
-            transform: scale(1.25) !important;
+            transform: scale(1.25) translateZ(0) !important;
             background-color: #15803d !important; /* primary */
             border-color: #15803d !important;
             box-shadow: 0 20px 25px -5px rgba(21, 128, 61, 0.3) !important;
@@ -129,11 +160,11 @@
         }
         .center-active > div i {
             color: white !important;
-            transform: scale(1.1) !important;
+            transform: scale(1.1) translateZ(0) !important;
         }
         .center-active h4 {
             color: #15803d !important;
-            transform: scale(1.15);
+            transform: scale(1.15) translateZ(0);
             font-weight: 800;
         }
 
@@ -165,7 +196,7 @@
             <div class="absolute w-24 h-24 bg-primary/20 rounded-full animate-ping"></div>
             <div class="absolute w-32 h-32 bg-primary/10 rounded-full animate-pulse delay-150"></div>
             
-            <img id="loader-short-logo" src="" class="hidden relative w-20 h-20 object-contain animate-bounce drop-shadow-2xl rounded-2xl z-10" alt="Short Logo">
+            <img id="loader-short-logo" src="" class="hidden relative w-20 h-20 object-contain animate-bounce drop-shadow-2xl rounded-2xl z-10" alt="Short Logo" draggable="false">
             <div id="loader-default-icon" class="relative w-16 h-16 bg-gradient-to-tr from-primary to-emerald-400 text-white rounded-2xl flex items-center justify-center font-bold text-3xl shadow-2xl animate-bounce z-10">
                 <i class="fa-solid fa-leaf"></i>
             </div>
@@ -183,11 +214,11 @@
     </div>
 
     <!-- UNIFIED HEADER -->
-    <header class="glass-nav border-b border-emerald-100 shadow-sm w-full transition-all">
+    <header class="glass-nav border-b border-emerald-100 shadow-sm w-full transition-all sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-7 flex items-center gap-4 md:gap-8 lg:gap-12">
             
             <a href="#" onclick="window.filterCategory('all'); window.scrollTo(0,0); return false;" class="flex items-center gap-3 sm:gap-5 cursor-pointer group shrink-0">
-                <img id="public-logo" src="" class="pub-logo-img brand-logo hidden h-16 sm:h-20 md:h-24 lg:h-32 w-auto max-w-[250px] sm:max-w-[350px] md:max-w-[450px] lg:max-w-[600px] object-contain transition-transform group-hover:scale-105" alt="Logo">
+                <img id="public-logo" src="" class="pub-logo-img brand-logo hidden h-16 sm:h-20 md:h-24 lg:h-32 w-auto max-w-[250px] sm:max-w-[350px] md:max-w-[450px] lg:max-w-[600px] object-contain transition-transform group-hover:scale-105" alt="Logo" draggable="false">
                 <div class="pub-brand-initial brand-initial w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-primary text-white rounded-2xl flex items-center justify-center font-bold text-4xl sm:text-5xl md:text-6xl shadow-md transition-transform group-hover:scale-105">N</div>
                 <span id="brand-text" class="pub-brand-text font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-primary tracking-tight">Naisargik</span>
             </a>
@@ -229,7 +260,7 @@
 
     <!-- FLOATING IMAGE BANNER (SLIDER) -->
     <section class="w-full max-w-7xl mx-auto mt-2 md:mt-4 px-4 sm:px-6 lg:px-8 relative z-20">
-        <div class="relative w-full h-[200px] sm:h-[300px] md:h-[450px] lg:h-[550px] rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl group bg-gray-100">
+        <div class="relative w-full h-[200px] sm:h-[300px] md:h-[450px] lg:h-[550px] rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl group bg-gray-100 transform translate-z-0">
             <div id="slider-track" class="w-full h-full relative"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-20 pointer-events-none rounded-2xl md:rounded-[2rem]"></div>
             
@@ -252,7 +283,7 @@
         
         <div class="relative overflow-hidden group py-4">
             <div class="absolute top-0 left-0 bottom-0 w-8 md:w-16 bg-gradient-to-r from-[#fafafa] to-transparent z-10 pointer-events-none"></div>
-            <div id="featured-cats" class="flex gap-4 sm:gap-6 md:gap-10 py-6 flex-nowrap items-center w-max">
+            <div id="featured-cats" class="flex gap-4 sm:gap-6 md:gap-10 py-6 flex-nowrap items-center w-max transform translate-z-0">
                 <!-- Dynamically Rendered Circular Categories -->
             </div>
             <div class="absolute top-0 right-0 bottom-0 w-8 md:w-16 bg-gradient-to-l from-[#fafafa] to-transparent z-10 pointer-events-none"></div>
@@ -330,10 +361,10 @@
     </section>
 
     <!-- PRODUCT DETAILS FULL PAGE VIEW -->
-    <div id="product-details-page" class="fixed inset-0 z-[150] bg-white hidden overflow-y-auto transition-opacity duration-300 opacity-0 flex-col">
+    <div id="product-details-page" class="fixed inset-0 z-[150] bg-white hidden overflow-y-auto overscroll-none transition-opacity duration-300 opacity-0 flex-col">
         <div class="sticky top-0 bg-white/95 backdrop-blur-md z-[60] border-b border-gray-100 px-4 py-3 flex items-center justify-between shadow-sm">
             <a href="#" onclick="window.goHomeFromModal('product'); return false;" class="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0">
-                <img src="" class="pub-logo-img hidden h-12 sm:h-16 md:h-20 w-auto max-w-[200px] sm:max-w-[250px] md:max-w-[350px] object-contain transition-transform group-hover:scale-105" alt="Logo">
+                <img src="" class="pub-logo-img hidden h-12 sm:h-16 md:h-20 w-auto max-w-[200px] sm:max-w-[250px] md:max-w-[350px] object-contain transition-transform group-hover:scale-105" alt="Logo" draggable="false">
                 <div class="pub-brand-initial w-10 h-10 sm:w-12 sm:h-12 bg-primary text-white rounded-lg flex items-center justify-center font-bold text-2xl shadow-md transition-transform group-hover:scale-105">N</div>
                 <span class="pub-brand-text font-extrabold text-2xl sm:text-3xl text-primary tracking-tight">Naisargik</span>
             </a>
@@ -346,7 +377,7 @@
         <div class="w-full max-w-7xl mx-auto flex flex-col md:flex-row p-4 sm:p-6 lg:p-10 gap-6 lg:gap-12 relative flex-1">
             <div class="w-full md:w-1/2 md:sticky md:top-24 h-max flex flex-col gap-3">
                 <div class="w-full aspect-square relative rounded-3xl overflow-hidden shadow-md bg-[#f8fafc] border border-gray-100 flex items-center justify-center group">
-                    <img id="modal-main-img" src="" alt="Product" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    <img id="modal-main-img" src="" alt="Product" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" decoding="async" draggable="false">
                     <button onclick="window.prevModalImage(event)" id="modal-img-prev" class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md hidden z-10 text-gray-800 transition-all opacity-0 group-hover:opacity-100">
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
@@ -354,7 +385,7 @@
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
                 </div>
-                <div id="modal-thumbnails" class="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide hidden"></div>
+                <div id="modal-thumbnails" class="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide hidden snap-x snap-mandatory"></div>
             </div>
 
             <div class="w-full md:w-1/2 flex flex-col justify-start pb-20 md:pb-0">
@@ -381,12 +412,12 @@
     </div>
 
     <!-- FULL PAGE CHECKOUT OVERLAY (NEW) - MOBILE RESPONSIVE UPGRADE -->
-    <div id="full-checkout-page" class="fixed inset-0 bg-gray-50 lg:bg-white z-[200] hidden flex-col overflow-hidden transition-opacity duration-300 opacity-0">
+    <div id="full-checkout-page" class="fixed inset-0 bg-gray-50 lg:bg-white z-[200] hidden flex-col overflow-hidden transition-opacity duration-300 opacity-0 overscroll-none">
         
         <!-- Responsive Header (Static) -->
         <header class="border-b border-gray-200 lg:border-gray-100 py-3 px-4 sm:px-6 flex items-center justify-between bg-white/95 backdrop-blur-md z-[70] shadow-sm shrink-0">
             <a href="#" onclick="window.goHomeFromModal('checkout'); return false;" class="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0">
-                <img src="" class="pub-logo-img hidden h-10 sm:h-12 md:h-16 w-auto max-w-[150px] sm:max-w-[200px] md:max-w-[250px] object-contain transition-transform group-hover:scale-105" alt="Logo">
+                <img src="" class="pub-logo-img hidden h-10 sm:h-12 md:h-16 w-auto max-w-[150px] sm:max-w-[200px] md:max-w-[250px] object-contain transition-transform group-hover:scale-105" alt="Logo" draggable="false">
                 <div class="pub-brand-initial w-10 h-10 sm:w-12 sm:h-12 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-xl sm:text-2xl shadow-md transition-transform group-hover:scale-105">N</div>
                 <span class="pub-brand-text font-extrabold text-xl sm:text-2xl text-primary tracking-tight">Naisargik</span>
             </a>
@@ -396,7 +427,7 @@
         </header>
 
         <!-- Main Scrollable Content Area -->
-        <div class="flex-1 overflow-y-auto flex flex-col w-full relative">
+        <div class="flex-1 overflow-y-auto flex flex-col w-full relative overscroll-none">
             <div class="w-full max-w-7xl mx-auto flex flex-col lg:flex-row flex-1 pb-6 lg:pb-0">
                 
                 <!-- Left Side: Form Section -->
@@ -465,7 +496,7 @@
                         </h3>
                         
                         <!-- Dynamic Items will load here -->
-                        <div id="full-checkout-items" class="space-y-3 mb-6 max-h-[35vh] lg:max-h-none overflow-y-auto pr-1 scrollbar-hide">
+                        <div id="full-checkout-items" class="space-y-3 mb-6 max-h-[35vh] lg:max-h-none overflow-y-auto pr-1 scrollbar-hide overscroll-contain">
                             <!-- Example Item -->
                         </div>
 
@@ -511,7 +542,7 @@
         <div class="max-w-3xl mx-auto space-y-6 relative z-10">
             <h2 data-field="ctaTitle" class="text-3xl md:text-4xl font-extrabold">অর্ডার করতে সরাসরি কল করুন</h2>
             <p data-field="ctaDesc" class="text-emerald-100 text-base md:text-lg font-medium max-w-xl mx-auto">যেকোনো তথ্য জানতে বা ফোনে অর্ডার করতে আমাদের কাস্টমার সার্ভিসে যোগাযোগ করুন.</p>
-            <div class="inline-flex items-center gap-3 mt-4 bg-secondary text-white font-bold py-4 px-10 rounded-full shadow-2xl text-lg md:text-xl border border-amber-400/50">
+            <div class="inline-flex items-center gap-3 mt-4 bg-secondary text-white font-bold py-4 px-10 rounded-full shadow-2xl text-lg md:text-xl border border-amber-400/50 cursor-pointer hover:bg-secondaryHover transition-colors">
                 <i class="fa-solid fa-phone"></i>
                 <span data-field="ctaPhone" id="public-contact-phone">০১৭০০-০০০০০০</span>
             </div>
@@ -523,7 +554,7 @@
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
             <div class="space-y-6 relative">
                 <a href="#" onclick="window.filterCategory('all'); window.scrollTo(0,0); return false;" class="flex items-center gap-3 cursor-pointer inline-block group">
-                    <img id="footer-logo" src="" class="pub-logo-img hidden h-20 md:h-28 w-auto max-w-[250px] md:max-w-[300px] object-contain transition-transform group-hover:scale-105" alt="Logo">
+                    <img id="footer-logo" src="" class="pub-logo-img hidden h-20 md:h-28 w-auto max-w-[250px] md:max-w-[300px] object-contain transition-transform group-hover:scale-105" alt="Logo" draggable="false">
                     <div class="pub-brand-initial footer-brand-initial w-16 h-16 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-3xl transition-transform group-hover:scale-105">N</div>
                     <span id="footer-brand-text" class="pub-brand-text font-extrabold text-3xl md:text-4xl text-white tracking-tight">Naisargik</span>
                 </a>
@@ -551,13 +582,13 @@
 
     <!-- SLIDING CART DRAWER -->
     <div id="cart-drawer-overlay" class="fixed inset-0 bg-black/60 z-[90] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm" onclick="window.closeCart()"></div>
-    <div id="cart-drawer" class="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-[100] shadow-2xl border-l border-emerald-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div id="cart-drawer" class="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-[100] shadow-2xl border-l border-emerald-50 transform translate-x-full transition-transform duration-300 flex flex-col overscroll-none">
         <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-emerald-50">
             <h3 class="font-extrabold text-lg text-primary flex items-center gap-2"><i class="fa-solid fa-basket-shopping text-secondary"></i> আপনার শপিং কার্ট</h3>
             <button onclick="window.closeCart()" class="text-gray-400 hover:text-red-500 transition-colors p-1.5 hover:bg-white rounded-full border border-transparent hover:border-gray-100"><i class="fa-solid fa-xmark text-lg"></i></button>
         </div>
         
-        <div id="cart-content-area" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
+        <div id="cart-content-area" class="flex-1 overflow-y-auto p-5 space-y-4 overscroll-contain"></div>
 
         <div class="border-t border-gray-100 p-5 bg-white space-y-4">
             <div class="flex justify-between items-center text-gray-800"><span class="font-bold text-gray-600">সর্বমোট মূল্য:</span><span id="cart-total" class="font-black text-2xl text-primary">৳ ০</span></div>
@@ -569,8 +600,8 @@
 
     <!-- Alert Modal -->
     <div id="public-alert-modal-overlay" class="fixed inset-0 bg-black/60 z-[9998] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm" onclick="window.closeAlertModal()"></div>
-    <div id="public-alert-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none">
-        <div id="public-alert-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col transform scale-95 transition-all duration-300 pointer-events-auto p-6 md:p-8 text-center max-h-[90vh] overflow-y-auto">
+    <div id="public-alert-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none overscroll-none">
+        <div id="public-alert-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col transform scale-95 transition-all duration-300 pointer-events-auto p-6 md:p-8 text-center max-h-[90vh] overflow-y-auto overscroll-contain">
             <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-primary text-3xl shadow-inner border border-emerald-100"><i class="fa-solid fa-circle-check"></i></div>
             <h2 class="text-2xl font-black text-gray-900 mb-2">ধন্যবাদ!</h2>
             <p class="text-gray-600 mb-2 text-sm md:text-base font-medium">আপনার অর্ডারটি সফলভাবে আমাদের কাছে পৌঁছেছে。</p>
@@ -603,7 +634,7 @@
 
     <!-- Track Order Modal (UPDATED) -->
     <div id="track-modal-overlay" class="fixed inset-0 bg-black/60 z-[9998] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm" onclick="window.closeTrackModal()"></div>
-    <div id="track-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none">
+    <div id="track-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none overscroll-none">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col transform scale-95 transition-all duration-300 pointer-events-auto p-5 sm:p-6 text-center max-h-[90vh]">
             <div class="flex justify-between items-center mb-6 shrink-0 border-b border-gray-100 pb-4">
                 <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2"><i class="fa-solid fa-location-crosshairs text-primary"></i> অর্ডার ট্র্যাকিং</h3>
@@ -616,7 +647,7 @@
             </div>
             
             <!-- Result Area -->
-            <div id="track-result" class="text-left hidden w-full overflow-y-auto scrollbar-hide flex-1">
+            <div id="track-result" class="text-left hidden w-full overflow-y-auto scrollbar-hide flex-1 overscroll-contain">
                 <!-- Result Area Loaded Here -->
             </div>
         </div>
@@ -845,7 +876,7 @@
             homepageData.sliderImages.forEach((img, idx) => {
                 const slide = document.createElement('div');
                 slide.className = `slide-item absolute inset-0 w-full h-full ${idx === currentSlide ? 'active' : ''}`;
-                slide.innerHTML = `<img src="${img}" alt="Banner" class="w-full h-full object-cover">`;
+                slide.innerHTML = `<img src="${img}" alt="Banner" loading="lazy" decoding="async" draggable="false" class="w-full h-full object-cover">`;
                 track.appendChild(slide);
 
                 const dot = document.createElement('button');
@@ -879,7 +910,7 @@
                 homepageData.featuredCategories.forEach(cat => {
                     let imgHtml = '';
                     if(cat.image && cat.image.startsWith('http')) {
-                        imgHtml = `<img src="${cat.image}" class="w-full h-full object-cover rounded-full" alt="${cat.name}">`;
+                        imgHtml = `<img src="${cat.image}" loading="lazy" decoding="async" draggable="false" class="w-full h-full object-cover rounded-full" alt="${cat.name}">`;
                     } else {
                         imgHtml = `<i class="${cat.image || 'fa-solid fa-leaf'} text-2xl md:text-3xl text-emerald-600 group-hover:text-white transition-colors"></i>`;
                     }
@@ -1050,8 +1081,8 @@
                         ${isOutOfStock ? `<div class="absolute top-2 md:top-3 left-2 md:left-3 bg-red-600/90 backdrop-blur text-white text-[9px] md:text-[10px] font-black px-2 py-1 md:px-3 md:py-1.5 rounded-full z-10 shadow-sm uppercase">স্টক শেষ</div>` : ''}
                         
                         <div class="relative aspect-square w-full bg-[#f8fafc] group-hover:bg-[#f1f5f9] transition-colors flex items-center justify-center overflow-hidden">
-                            <img src="${imgUrl}" alt="${product.name}" class="product-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Product'">
-                            <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <img src="${imgUrl}" alt="${product.name}" loading="lazy" decoding="async" draggable="false" class="product-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Product'">
+                            <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                         </div>
 
                         <div class="p-3.5 sm:p-4 md:p-5 flex-1 flex flex-col bg-white">
@@ -1089,8 +1120,8 @@
             if (currentModalImages.length > 1) {
                 prevBtn.classList.remove('hidden'); nextBtn.classList.remove('hidden'); thumbContainer.classList.remove('hidden');
                 thumbContainer.innerHTML = currentModalImages.map((img, idx) => `
-                    <div onclick="window.setModalMainImage(${idx})" class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden border-2 cursor-pointer transition-all duration-200 ${idx === currentImageIndex ? 'border-primary shadow-md opacity-100' : 'border-transparent opacity-50 hover:opacity-100 hover:border-emerald-200'} thumb-btn">
-                        <img src="${img}" class="w-full h-full object-cover">
+                    <div onclick="window.setModalMainImage(${idx})" class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden border-2 cursor-pointer transition-all duration-200 snap-center ${idx === currentImageIndex ? 'border-primary shadow-md opacity-100' : 'border-transparent opacity-50 hover:opacity-100 hover:border-emerald-200'} thumb-btn">
+                        <img src="${img}" class="w-full h-full object-cover" draggable="false" loading="lazy">
                     </div>
                 `).join('');
                 const activeThumb = thumbContainer.children[currentImageIndex];
@@ -1157,7 +1188,6 @@
             if(product.stockStatus === 'Out of Stock') {
                 btnContainer.innerHTML = `<button class="w-full bg-gray-200 text-gray-500 font-bold py-4 rounded-xl cursor-not-allowed flex justify-center items-center gap-3 text-lg" disabled><i class="fa-solid fa-ban"></i> স্টক শেষ</button>`;
             } else {
-                // Modified: 'Buy Now' directly goes to full-page checkout
                 btnContainer.innerHTML = `
                     <button onclick="window.closeProductModal(true); window.addModalProductToCart();" class="w-1/2 bg-emerald-50 hover:bg-primary text-primary hover:text-white font-bold py-4 rounded-2xl transition-all flex justify-center items-center gap-2 md:gap-3 text-sm md:text-lg border border-primary/20 hover:border-transparent group">
                         <i class="fa-solid fa-cart-plus group-hover:-translate-y-1 transition-transform"></i> <span class="hidden sm:block">কার্টে যোগ করুন</span><span class="sm:hidden">কার্ট</span>
@@ -1219,8 +1249,8 @@
 
         window.buyNowModalProduct = () => {
             if(!currentModalProduct) return;
-            window.addModalProductToCart(true); // add without opening sliding cart
-            window.openFullCheckout(); // Direct open the new checkout page
+            window.addModalProductToCart(true); 
+            window.openFullCheckout(); 
         };
 
         function renderCategoryNav() {
@@ -1314,16 +1344,15 @@
             
             container.innerHTML = cart.map(item => {
                 total += (item.price * item.quantity);
-                return `<div class="flex gap-4 items-center bg-white p-3 rounded-2xl border mb-3"><img src="${item.image}" class="w-16 h-16 object-cover rounded-xl border flex-shrink-0"><div class="flex-1 min-w-0"><h4 class="font-bold text-xs truncate">${item.name}</h4><div class="text-primary font-extrabold text-sm mt-1">৳ ${item.price}</div></div><div class="flex items-center gap-1 bg-gray-50 rounded-lg p-1 border"><button onclick="window.updateQty('${item.id}', -1)" class="w-6 h-6 hover:bg-gray-200 rounded">-</button><span class="text-xs font-bold w-5 text-center">${item.quantity}</span><button onclick="window.updateQty('${item.id}', 1)" class="w-6 h-6 hover:bg-gray-200 rounded">+</button></div><button onclick="window.removeCartItem('${item.id}')" class="text-red-500 p-2"><i class="fa-solid fa-xmark"></i></button></div>`;
+                return `<div class="flex gap-4 items-center bg-white p-3 rounded-2xl border mb-3"><img src="${item.image}" class="w-16 h-16 object-cover rounded-xl border flex-shrink-0" loading="lazy" draggable="false"><div class="flex-1 min-w-0"><h4 class="font-bold text-xs truncate">${item.name}</h4><div class="text-primary font-extrabold text-sm mt-1">৳ ${item.price}</div></div><div class="flex items-center gap-1 bg-gray-50 rounded-lg p-1 border"><button onclick="window.updateQty('${item.id}', -1)" class="w-6 h-6 hover:bg-gray-200 rounded transition-colors">-</button><span class="text-xs font-bold w-5 text-center">${item.quantity}</span><button onclick="window.updateQty('${item.id}', 1)" class="w-6 h-6 hover:bg-gray-200 rounded transition-colors">+</button></div><button onclick="window.removeCartItem('${item.id}')" class="text-red-500 p-2"><i class="fa-solid fa-xmark"></i></button></div>`;
             }).join('');
             document.getElementById('cart-total').innerText = `৳ ${total}`;
         }
 
-        // NEW: FULL PAGE CHECKOUT LOGIC
         window.proceedToCheckout = () => { 
             if(cart.length === 0) return showNotification("কার্ট খালি!", true); 
-            window.closeCartUI(); // Close side cart
-            window.openFullCheckout(); // Open new full page checkout
+            window.closeCartUI(); 
+            window.openFullCheckout(); 
         };
 
         window.openFullCheckout = (skipHistory = false) => {
@@ -1338,7 +1367,7 @@
                     return `
                         <div class="flex items-center gap-4 bg-white p-3 rounded-2xl border border-gray-100 shadow-sm">
                             <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl border border-gray-200 overflow-hidden shrink-0">
-                                <img src="${item.image}" class="w-full h-full object-cover">
+                                <img src="${item.image}" loading="lazy" class="w-full h-full object-cover">
                                 <span class="absolute -top-1.5 -right-1.5 bg-gray-700 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">${item.quantity}</span>
                             </div>
                             <div class="flex-1 min-w-0">
@@ -1353,11 +1382,9 @@
             document.getElementById('full-subtotal').innerText = `৳ ${total}`;
             document.getElementById('full-total').innerText = `৳ ${total}`;
             
-            // Sync mobile sticky total
             const mobileStickyTotal = document.getElementById('mobile-sticky-total');
             if(mobileStickyTotal) mobileStickyTotal.innerText = `৳ ${total}`;
 
-            // Restore from localStorage
             document.getElementById('full-cust-name').value = localStorage.getItem('nai_name') || '';
             document.getElementById('full-cust-phone').value = localStorage.getItem('nai_phone') || '';
             document.getElementById('full-cust-address').value = localStorage.getItem('nai_address') || '';
@@ -1384,10 +1411,9 @@
         window.backToCartFromFullPage = () => {
             window.closeFullCheckoutUI();
             if (window.location.hash === '#checkout') window.history.back();
-            setTimeout(() => { window.openCart(true); }, 300); // reopen cart visually 
+            setTimeout(() => { window.openCart(true); }, 300); 
         };
 
-        // NEW: Submit logic mapped to full page form
         window.submitFullOrder = async () => {
             const name = document.getElementById('full-cust-name').value;
             const phone = document.getElementById('full-cust-phone').value;
@@ -1416,7 +1442,6 @@
             try {
                 await addDoc(collection(db, "orders"), orderData);
                 
-                // Set order ID in Success Modal
                 document.getElementById('success-order-id').innerText = orderId;
                 renderSuccessSuggestions(); 
                 
@@ -1441,12 +1466,10 @@
             });
         };
 
-        // NEW: Render Dynamic Suggestions in Success Modal
         function renderSuccessSuggestions() {
             const container = document.getElementById('success-suggestions');
             if(!container || allProducts.length === 0) return;
             
-            // Get 3 random products
             const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
             const suggestions = shuffled.slice(0, 3);
             
@@ -1455,7 +1478,7 @@
                 return `
                     <div onclick="window.closeAlertModal(); setTimeout(()=>window.openProductModal('${product.id}'), 300)" class="bg-white border rounded-xl overflow-hidden cursor-pointer hover:shadow-md transition-all group p-2 text-center h-full flex flex-col">
                         <div class="aspect-square bg-gray-50 rounded-lg overflow-hidden mb-2 relative">
-                            <img src="${imgUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Product'">
+                            <img src="${imgUrl}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Product'">
                         </div>
                         <h4 class="text-[10px] sm:text-xs font-bold text-gray-800 line-clamp-2 leading-tight">${product.name}</h4>
                         <div class="text-primary font-black text-xs sm:text-sm mt-auto pt-1">৳ ${product.price}</div>
@@ -1472,7 +1495,6 @@
             setTimeout(() => { overlay.classList.add('hidden'); modal.classList.add('hidden'); }, 300);
         };
 
-        // NEW: Track Order Logic
         window.openTrackModal = () => {
             const modal = document.getElementById('track-modal');
             const overlay = document.getElementById('track-modal-overlay');
@@ -1512,7 +1534,6 @@
                 } else {
                     const order = querySnapshot.docs[0].data();
                     
-                    // 1. Order Status Logic Mapping (Matched with Admin Panel)
                     const orderStatuses = [
                         { id: 'new', label: 'অর্ডার প্লেসড', icon: 'fa-clipboard-list' },
                         { id: 'verification', label: 'ভেরিফিকেশন', icon: 'fa-user-check' },
@@ -1527,7 +1548,6 @@
                     const isCancelled = order.status === 'cancelled';
                     const isReturned = order.status === 'returned';
 
-                    // Fallback for custom/unmapped statuses (assume new if not found, unless cancelled/returned)
                     if (currentIdx === -1 && !isCancelled && !isReturned) currentIdx = 0;
 
                     let stepperHtml = '';
@@ -1546,7 +1566,6 @@
                             let textClass = (isPast || isCurrent) ? 'text-gray-800 font-bold' : 'text-gray-400 font-medium';
                             let timeHtml = '';
                             
-                            // Check if timestamps exist
                             const timeField = orderStatuses[i].id + 'At';
                             if (order[timeField] || (i === 0 && order.createdAt)) {
                                  const dateObj = new Date(order[timeField] || order.createdAt);
@@ -1571,7 +1590,6 @@
                         stepperHtml += '</div>';
                     }
 
-                    // 2. Invoice Summary Logic
                     let itemsHtml = '';
                     let subTotal = 0;
                     if (order.items && order.items.length > 0) {
