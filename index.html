@@ -213,50 +213,114 @@
         <span id="toast-message" class="font-semibold text-sm">সফল হয়েছে!</span>
     </div>
 
-    <!-- UNIFIED HEADER -->
+    <!-- COMPACT & SLIM UNIFIED HEADER -->
     <header class="glass-nav border-b border-emerald-100 shadow-sm w-full transition-all sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-7 flex items-center gap-4 md:gap-8 lg:gap-12">
+        <!-- Single Row Layout for both Mobile and Desktop -->
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-2 md:py-3 flex items-center gap-2 sm:gap-4 lg:gap-6 justify-between">
             
-            <a href="#" onclick="window.filterCategory('all'); window.scrollTo(0,0); return false;" class="flex items-center gap-3 sm:gap-5 cursor-pointer group shrink-0">
-                <img id="public-logo" src="" class="pub-logo-img brand-logo hidden h-16 sm:h-20 md:h-24 lg:h-32 w-auto max-w-[250px] sm:max-w-[350px] md:max-w-[450px] lg:max-w-[600px] object-contain transition-transform group-hover:scale-105" alt="Logo" draggable="false">
-                <div class="pub-brand-initial brand-initial w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-primary text-white rounded-2xl flex items-center justify-center font-bold text-4xl sm:text-5xl md:text-6xl shadow-md transition-transform group-hover:scale-105">N</div>
-                <span id="brand-text" class="pub-brand-text font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-primary tracking-tight">Naisargik</span>
-            </a>
+            <!-- 1. Hamburger Menu + Logo -->
+            <div class="flex items-center gap-1 sm:gap-3 shrink-0">
+                <button onclick="window.openSidebar()" class="p-1.5 sm:p-2 text-gray-700 hover:text-primary transition-colors">
+                    <i class="fa-solid fa-bars text-lg sm:text-xl"></i>
+                </button>
+                
+                <a href="#" onclick="window.filterCategory('all'); window.scrollTo(0,0); return false;" class="flex items-center gap-1.5 sm:gap-2 cursor-pointer group shrink-0">
+                    <img id="public-logo" src="" class="pub-logo-img brand-logo hidden h-7 sm:h-9 md:h-12 w-auto max-w-[150px] sm:max-w-[200px] object-contain transition-transform group-hover:scale-105" alt="Logo" draggable="false">
+                    <div class="pub-brand-initial brand-initial w-7 h-7 sm:w-9 sm:h-9 bg-primary text-white rounded-md sm:rounded-lg flex items-center justify-center font-bold text-lg sm:text-xl shadow-sm transition-transform group-hover:scale-105">N</div>
+                    <!-- Header name text removed to prioritize Logo -->
+                </a>
+            </div>
             
-            <div class="hidden md:flex flex-1 max-w-xl relative group">
-                <input type="text" id="desktop-search" oninput="window.handleSearch(this.value)" placeholder="পছন্দের পণ্য খুঁজুন..." class="w-full pl-5 pr-12 py-4 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary focus:bg-white transition-all text-sm font-medium shadow-inner">
-                <button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">
-                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            <!-- 2. Search Bar (Flex-1 to take available space on same line) -->
+            <div class="flex-1 max-w-2xl relative group">
+                <input type="text" id="unified-search" oninput="window.handleSearch(this.value)" placeholder="পণ্য খুঁজুন..." class="w-full pl-3 pr-8 sm:pl-4 sm:pr-10 py-1.5 sm:py-2.5 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary focus:bg-white transition-all text-xs sm:text-sm shadow-inner">
+                <button class="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <i class="fa-solid fa-magnifying-glass text-[11px] sm:text-sm"></i>
                 </button>
             </div>
 
-            <div class="flex items-center gap-3 md:gap-4 shrink-0 ml-auto">
-                <button onclick="window.openTrackModal()" class="relative p-3 text-gray-600 hover:text-primary bg-white hover:bg-emerald-50 rounded-xl border border-gray-200 shadow-sm transition-all hidden sm:flex items-center gap-2" title="অর্ডার ট্র্যাক করুন">
-                    <i class="fa-solid fa-location-crosshairs text-xl md:text-2xl"></i>
-                    <span class="hidden lg:block font-bold text-sm">ট্র্যাক</span>
+            <!-- 3. Actions (Track, Cart) -->
+            <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+                <button onclick="window.openTrackModal()" class="relative p-1.5 sm:p-2 text-gray-600 hover:text-primary bg-white hover:bg-emerald-50 rounded-lg border border-gray-200/50 shadow-sm transition-all flex items-center gap-1.5 sm:gap-2" title="অর্ডার ট্র্যাক করুন">
+                    <i class="fa-solid fa-location-crosshairs text-base sm:text-lg md:text-xl"></i>
+                    <span class="hidden md:block font-bold text-sm">ট্র্যাক</span>
                 </button>
-                <button onclick="window.openCart()" class="relative p-3 text-primary bg-white hover:bg-emerald-50 rounded-xl border border-gray-200 shadow-sm transition-all flex items-center gap-2">
+                <button onclick="window.openCart()" class="relative p-1.5 sm:p-2 text-primary bg-white hover:bg-emerald-50 rounded-lg border border-gray-200/50 shadow-sm transition-all flex items-center gap-1.5 sm:gap-2">
                     <div class="relative">
-                        <i class="fa-solid fa-bag-shopping text-xl md:text-2xl"></i>
-                        <span id="cart-count" class="absolute -top-2 -right-2 bg-secondary text-white text-[10px] md:text-xs font-bold w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-sm">0</span>
+                        <i class="fa-solid fa-bag-shopping text-base sm:text-lg md:text-xl"></i>
+                        <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-secondary text-white text-[9px] sm:text-[10px] font-bold w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border border-white shadow-sm">0</span>
                     </div>
-                    <span class="hidden lg:block font-bold text-sm text-gray-700">কার্ট</span>
+                    <span class="hidden md:block font-bold text-sm text-gray-700">কার্ট</span>
                 </button>
             </div>
-        </div>
-
-        <div class="md:hidden px-4 pb-5 flex gap-2">
-            <div class="relative w-full group flex-1">
-                <input type="text" id="mobile-search" oninput="window.handleSearch(this.value)" placeholder="পছন্দের পণ্য খুঁজুন..." class="w-full pl-4 pr-10 py-3.5 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 focus:bg-white transition-all text-sm shadow-inner">
-                <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
-                </button>
-            </div>
-            <button onclick="window.openTrackModal()" class="bg-white border border-gray-200 w-12 rounded-xl shadow-sm flex items-center justify-center text-gray-600 hover:text-primary hover:border-primary transition-colors">
-                <i class="fa-solid fa-location-crosshairs"></i>
-            </button>
         </div>
     </header>
+
+    <!-- SIDEBAR DRAWER -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-[90] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm" onclick="window.closeSidebar()"></div>
+    <div id="sidebar-drawer" class="fixed left-0 top-0 bottom-0 w-[280px] max-w-[80vw] bg-white z-[100] shadow-2xl border-r border-emerald-50 transform -translate-x-full transition-transform duration-300 flex flex-col overscroll-none">
+        
+        <div class="p-5 border-b border-gray-100 flex justify-between items-start bg-emerald-50/50 shrink-0">
+            <a href="#" onclick="window.closeSidebar(); window.filterCategory('all'); window.scrollTo(0,0); return false;" class="flex items-center gap-2 group cursor-pointer max-w-[80%]">
+                <img src="" class="pub-logo-img hidden h-12 md:h-14 w-auto max-w-full object-contain transition-transform group-hover:scale-105" alt="Logo">
+                <div class="pub-brand-initial w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-2xl shadow-sm transition-transform group-hover:scale-105">N</div>
+            </a>
+            <button onclick="window.closeSidebar()" class="text-gray-400 hover:text-red-500 transition-colors p-1.5 hover:bg-white rounded-full border border-transparent hover:border-gray-100"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-4 space-y-1">
+            <a href="#" onclick="window.closeSidebar(); window.filterCategory('all'); window.scrollTo(0,0); return false;" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-primary rounded-xl font-bold transition-colors">
+                <i class="fa-solid fa-house w-5 text-center"></i> হোমপেজ
+            </a>
+            <a href="#" onclick="window.closeSidebar(); window.openTrackModal(); return false;" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-primary rounded-xl font-bold transition-colors">
+                <i class="fa-solid fa-location-crosshairs w-5 text-center"></i> অর্ডার ট্র্যাক করুন
+            </a>
+            <div class="h-px bg-gray-100 my-3"></div>
+            <div class="px-4 py-2 text-xs font-black text-gray-400 uppercase tracking-wider">ক্যাটাগরি সমূহ</div>
+            
+            <div id="sidebar-categories" class="space-y-1">
+                <!-- Dynamically Populated Categories -->
+                <a href="#" onclick="window.closeSidebar(); window.filterCategory('all'); return false;" class="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-primary rounded-lg font-medium transition-colors text-sm">
+                    <i class="fa-solid fa-border-all w-4 text-center text-gray-400"></i> সব পণ্য
+                </a>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-gray-100 bg-gray-50 shrink-0 space-y-3 pb-safe">
+            <!-- Contact Info -->
+            <div class="flex items-center gap-3 text-gray-600 justify-center">
+                <i class="fa-solid fa-phone text-primary"></i> <span id="sidebar-phone" class="font-bold text-sm">০১৭০০-০০০০০০</span>
+            </div>
+            
+            <!-- Auth Login Section -->
+            <div id="auth-section" class="flex flex-col gap-2 pt-2 border-t border-gray-200/50">
+                <!-- Login Button -->
+                <button id="btn-login" onclick="window.loginWithGoogle()" class="w-full bg-white border border-gray-200 hover:bg-gray-100 text-gray-700 font-bold py-2.5 rounded-xl shadow-sm transition-all flex justify-center items-center gap-2 text-sm">
+                    <svg class="w-4 h-4" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.7 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.2-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    গুগল দিয়ে লগইন
+                </button>
+                
+                <!-- User Profile (Hidden by default) -->
+                <div id="user-profile" class="hidden flex-col items-center gap-2">
+                    <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-gray-200 w-full shadow-sm">
+                        <img id="user-avatar" src="" class="w-8 h-8 rounded-full border border-gray-100 object-cover" alt="Avatar">
+                        <div class="flex-1 min-w-0">
+                            <p id="user-name" class="text-xs font-bold text-gray-800 truncate">Name</p>
+                            <p id="user-email" class="text-[10px] text-gray-500 truncate">email</p>
+                        </div>
+                        <button onclick="window.logoutUser()" class="text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors" title="লগআউট">
+                            <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- FLOATING IMAGE BANNER (SLIDER) -->
     <section class="w-full max-w-7xl mx-auto mt-2 md:mt-4 px-4 sm:px-6 lg:px-8 relative z-20">
@@ -709,6 +773,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, onSnapshot, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBTF9qOouM1d6SwfBqI0n7ytQRr5ROEj0k",
@@ -719,10 +784,14 @@
             appId: "1:935147333240:web:bc0cd8a370d22ee678ef8d"
         };
 
-        let app, db;
+        let app, db, auth, provider;
+        let currentUser = null;
+
         try {
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
+            auth = getAuth(app);
+            provider = new GoogleAuthProvider();
         } catch (e) {
             console.error("Firebase startup failed.");
         }
@@ -746,6 +815,29 @@
             featuredCategories: [],
             usefulLinks: [],
             socialLinks: []
+        };
+        
+        // --- Sidebar Logic ---
+        window.openSidebar = () => {
+            document.getElementById('sidebar-overlay').classList.remove('hidden'); 
+            document.getElementById('sidebar-drawer').classList.remove('hidden'); 
+            setTimeout(() => { 
+                document.getElementById('sidebar-overlay').classList.remove('opacity-0'); 
+                document.getElementById('sidebar-overlay').classList.add('opacity-100'); 
+                document.getElementById('sidebar-drawer').classList.remove('-translate-x-full'); 
+            }, 50);
+        };
+        
+        window.closeSidebar = () => {
+            const drawer = document.getElementById('sidebar-drawer');
+            if(drawer.classList.contains('hidden')) return;
+            document.getElementById('sidebar-overlay').classList.remove('opacity-100'); 
+            document.getElementById('sidebar-overlay').classList.add('opacity-0'); 
+            drawer.classList.add('-translate-x-full'); 
+            setTimeout(() => { 
+                document.getElementById('sidebar-overlay').classList.add('hidden'); 
+                drawer.classList.add('hidden'); 
+            }, 300);
         };
 
         window.goHomeFromModal = function(modalType) {
@@ -781,7 +873,58 @@
             }, 3000);
         }
 
+        // --- Authentication Logic ---
+        window.loginWithGoogle = async () => {
+            if(!auth || !provider) return window.showNotification("লগইন সিস্টেম প্রস্তুত নয়!", true);
+            try {
+                await signInWithPopup(auth, provider);
+                window.showNotification("সফলভাবে লগইন হয়েছে!");
+            } catch (error) {
+                console.error("Login failed", error);
+                window.showNotification("লগইন ব্যর্থ হয়েছে!", true);
+            }
+        };
+
+        window.logoutUser = async () => {
+            if(!auth) return;
+            try {
+                await signOut(auth);
+                window.showNotification("লগআউট সম্পন্ন হয়েছে!");
+            } catch (error) {
+                console.error("Logout failed", error);
+            }
+        };
+
         function initRealtimeListeners() {
+            // Authentication State Listener
+            if (auth) {
+                onAuthStateChanged(auth, (user) => {
+                    const btnLogin = document.getElementById('btn-login');
+                    const userProfile = document.getElementById('user-profile');
+                    
+                    if (user) {
+                        currentUser = user;
+                        // User is signed in
+                        if(btnLogin) btnLogin.classList.add('hidden');
+                        if(userProfile) {
+                            userProfile.classList.remove('hidden');
+                            userProfile.classList.add('flex');
+                            document.getElementById('user-avatar').src = user.photoURL || 'https://placehold.co/100x100/e2e8f0/64748b?text=U';
+                            document.getElementById('user-name').innerText = user.displayName || 'User';
+                            document.getElementById('user-email').innerText = user.email || '';
+                        }
+                    } else {
+                        currentUser = null;
+                        // User is signed out
+                        if(btnLogin) btnLogin.classList.remove('hidden');
+                        if(userProfile) {
+                            userProfile.classList.add('hidden');
+                            userProfile.classList.remove('flex');
+                        }
+                    }
+                });
+            }
+
             if(!db) return;
 
             onSnapshot(doc(db, "settings", "general"), (snapshot) => {
@@ -791,7 +934,6 @@
                     if (data.logoUrl) {
                         document.querySelectorAll('.pub-logo-img').forEach(el => { el.src = data.logoUrl; el.classList.remove('hidden'); });
                         document.querySelectorAll('.pub-brand-initial').forEach(el => el.classList.add('hidden')); 
-                        document.querySelectorAll('.pub-brand-text').forEach(el => el.classList.add('hidden'));
                     }
 
                     if (data.shortLogoUrl) {
@@ -820,6 +962,11 @@
                     if(data.featuredCategories) homepageData.featuredCategories = data.featuredCategories;
                     if(data.usefulLinks) homepageData.usefulLinks = data.usefulLinks;
                     if(data.socialLinks) homepageData.socialLinks = data.socialLinks;
+                    if(data.ctaPhone) {
+                        homepageData.ctaPhone = data.ctaPhone;
+                        const sidebarPhone = document.getElementById('sidebar-phone');
+                        if(sidebarPhone) sidebarPhone.innerText = data.ctaPhone;
+                    }
                     homepageData = { ...homepageData, ...data };
                     
                     document.querySelectorAll('[data-field]').forEach(el => {
@@ -1009,8 +1156,8 @@
 
         window.handleSearch = function(query) {
             searchQuery = query.toLowerCase();
-            document.getElementById('desktop-search').value = query;
-            document.getElementById('mobile-search').value = query;
+            const unifiedSearch = document.getElementById('unified-search');
+            if(unifiedSearch) unifiedSearch.value = query;
             renderPublicProducts();
         }
 
@@ -1048,7 +1195,7 @@
             const resultText = document.getElementById('search-result-text');
             if (resultText) {
                 let clearBtnHtml = (searchQuery || activeCategory !== 'all') 
-                    ? `<button onclick="window.filterCategory('all'); document.getElementById('desktop-search').value=''; document.getElementById('mobile-search').value='';" class="ml-2 inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-white hover:bg-primaryHover rounded-full text-[10px] sm:text-xs font-bold transition-colors cursor-pointer shadow-sm"><i class="fa-solid fa-border-all"></i> সকল পণ্য</button>` 
+                    ? `<button onclick="window.filterCategory('all');" class="ml-2 inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-white hover:bg-primaryHover rounded-full text-[10px] sm:text-xs font-bold transition-colors cursor-pointer shadow-sm"><i class="fa-solid fa-border-all"></i> সকল পণ্য</button>` 
                     : '';
 
                 if (searchQuery) {
@@ -1255,16 +1402,33 @@
 
         function renderCategoryNav() {
             const selectContainer = document.getElementById('filter-category');
-            if(!selectContainer) return;
             const uniqueCategories = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
-            const currentSelected = selectContainer.value || activeCategory;
-            selectContainer.innerHTML = `<option value="all">সব পণ্য</option>` + uniqueCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-            selectContainer.value = currentSelected;
+            
+            if(selectContainer) {
+                const currentSelected = selectContainer.value || activeCategory;
+                selectContainer.innerHTML = `<option value="all">সব পণ্য</option>` + uniqueCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+                selectContainer.value = currentSelected;
+            }
+
+            // Populate Sidebar Categories Dynamically
+            const sidebarCats = document.getElementById('sidebar-categories');
+            if(sidebarCats) {
+                sidebarCats.innerHTML = `
+                    <a href="#" onclick="window.closeSidebar(); window.filterCategory('all'); return false;" class="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-emerald-50 hover:text-primary rounded-lg font-medium transition-colors text-sm">
+                        <i class="fa-solid fa-border-all w-4 text-center text-gray-400"></i> সব পণ্য
+                    </a>
+                ` + uniqueCategories.map(cat => `
+                    <a href="#" onclick="window.closeSidebar(); window.filterCategory('${cat}'); return false;" class="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-emerald-50 hover:text-primary rounded-lg font-medium transition-colors text-sm">
+                        <i class="fa-solid fa-leaf w-4 text-center text-emerald-400"></i> ${cat}
+                    </a>
+                `).join('');
+            }
         }
 
         window.filterCategory = function(catName, skipHistory = false) {
             activeCategory = catName; searchQuery = '';
-            document.getElementById('desktop-search').value = ''; document.getElementById('mobile-search').value = '';
+            const unifiedSearch = document.getElementById('unified-search');
+            if(unifiedSearch) unifiedSearch.value = '';
             const selectContainer = document.getElementById('filter-category');
             if(selectContainer) selectContainer.value = catName;
             renderPublicProducts();
@@ -1430,8 +1594,10 @@
             const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const orderId = 'ORD-' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 10);
 
+            // Added userId logic to match your security rules
             const orderData = {
                 orderId: orderId,
+                userId: currentUser ? currentUser.uid : null, // Added current user ID here
                 customer: { name, phone, address },
                 customerName: name, customerPhone: phone, customerAddress: address,
                 items: cart, subTotal: totalAmount, deliveryCharge: 0, totalAmount: totalAmount, totalPrice: totalAmount,
