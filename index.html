@@ -322,12 +322,10 @@
             
             <!-- Auth Login Section -->
             <div id="auth-section" class="flex flex-col gap-2 border-t border-gray-200/50 pt-3">
-                <!-- UPDATED Login Button -->
                 <button id="btn-login" onclick="window.openGenericModal('auth-modal')" class="w-full bg-primary text-white hover:bg-primaryHover font-bold py-3 rounded-xl shadow-sm transition-all flex justify-center items-center gap-2 text-sm">
                     <i class="fa-solid fa-right-to-bracket"></i> লগইন / সাইন আপ
                 </button>
                 
-                <!-- Clear Logout Button -->
                 <button id="sidebar-logout-btn" onclick="window.logoutUser()" class="hidden w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-xl transition-all flex justify-center items-center gap-2 text-sm border border-red-100 shadow-sm">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> সাইন আউট
                 </button>
@@ -707,8 +705,7 @@
         </div>
     </div>
 
-
-    <!-- UPDATED: Auth Modal with Email Link Authentication -->
+    <!-- UPDATED: Auth Modal with Standard Authentication & Verification Link -->
     <div id="auth-modal-overlay" class="fixed inset-0 bg-black/60 z-[9998] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm" onclick="window.closeGenericModal('auth-modal')"></div>
     <div id="auth-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none overscroll-none">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col transform scale-95 transition-all duration-300 pointer-events-auto p-6 max-h-[90vh] overflow-y-auto">
@@ -745,12 +742,6 @@
                         </svg>
                         গুগল দিয়ে লগইন
                     </button>
-
-                    <!-- New Button for Email Link (Passwordless) -->
-                    <button onclick="window.toggleAuthView('email-link')" class="w-full bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-primary font-bold py-3 rounded-xl shadow-sm transition-all flex justify-center items-center gap-2 text-sm">
-                        <i class="fa-solid fa-envelope-open-text"></i>
-                        ইমেইল লিংক দিয়ে লগইন
-                    </button>
                 </div>
 
                 <p class="text-center text-xs text-gray-500 mt-4">অ্যাকাউন্ট নেই? <span class="text-primary cursor-pointer font-bold hover:underline" onclick="window.toggleAuthView('register')">সাইন আপ করুন</span></p>
@@ -776,20 +767,6 @@
                 </div>
                 <button onclick="window.handleEmailRegister()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 rounded-xl transition-all shadow-md mt-2 flex justify-center items-center gap-2">সাইন আপ সম্পন্ন করুন</button>
                 <p class="text-center text-xs text-gray-500 mt-4">ইতোমধ্যে অ্যাকাউন্ট আছে? <span class="text-primary cursor-pointer font-bold hover:underline" onclick="window.toggleAuthView('login')">লগইন করুন</span></p>
-            </div>
-
-            <!-- Email Link View (Passwordless) -->
-            <div class="space-y-4 hidden" id="email-link-view">
-                <div class="text-center mb-4">
-                    <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3 text-primary text-xl"><i class="fa-solid fa-link"></i></div>
-                    <h4 class="font-bold text-gray-800 text-sm">ইমেইল লিংক ভেরিফিকেশন</h4>
-                    <p class="text-xs text-gray-500 mt-1">আপনার ইমেইল দিন, আমরা লগইন করার জন্য একটি ম্যাজিক লিংক পাঠাবো। পাসওয়ার্ডের প্রয়োজন নেই!</p>
-                </div>
-                <div>
-                    <input type="email" id="magic-email" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-primary font-medium" placeholder="আপনার ইমেইল ঠিকানা">
-                </div>
-                <button id="magic-btn" onclick="window.sendMagicLink()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 rounded-xl transition-all shadow-md mt-2 flex justify-center items-center gap-2">ম্যাজিক লিংক পাঠান</button>
-                <p class="text-center text-xs text-gray-500 mt-4"><span class="text-gray-400 cursor-pointer hover:underline" onclick="window.toggleAuthView('login')"><i class="fa-solid fa-arrow-left"></i> ফিরে যান</span></p>
             </div>
 
         </div>
@@ -976,8 +953,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, onSnapshot, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        // Updated Imports to include Email Link Methods
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, updateProfile, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // Updated Imports (Removed Magic Link methods and added sendEmailVerification)
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBTF9qOouM1d6SwfBqI0n7ytQRr5ROEj0k",
@@ -1086,16 +1063,14 @@
             window.closeGenericModal('profile-edit-modal');
         };
 
-        // --- Auth logics (Email / Link / Pass / Google) ---
+        // --- Auth logics (Email / Google) ---
         window.toggleAuthView = (view) => {
             const loginView = document.getElementById('login-form-view');
             const regView = document.getElementById('register-form-view');
-            const emailLinkView = document.getElementById('email-link-view');
             const title = document.getElementById('auth-modal-title');
             
             loginView.classList.add('hidden');
             regView.classList.add('hidden');
-            emailLinkView.classList.add('hidden');
 
             if (view === 'login') {
                 loginView.classList.remove('hidden');
@@ -1103,9 +1078,6 @@
             } else if (view === 'register') {
                 regView.classList.remove('hidden');
                 title.innerText = "নতুন অ্যাকাউন্ট খুলুন";
-            } else if (view === 'email-link') {
-                emailLinkView.classList.remove('hidden');
-                title.innerText = "ইমেইল লিংক দিয়ে লগইন";
             }
         };
 
@@ -1114,7 +1086,13 @@
             const pass = document.getElementById('auth-password').value;
             if(!email || !pass) return window.showNotification("ইমেইল এবং পাসওয়ার্ড লিখুন!", true);
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
+                const userCred = await signInWithEmailAndPassword(auth, email, pass);
+                // Check if email is verified
+                if (!userCred.user.emailVerified) {
+                    await signOut(auth); // Sign out if not verified
+                    window.showNotification("আপনার অ্যাকাউন্টটি এখনো ভেরিফাই করা হয়নি! দয়া করে আপনার ইমেইল চেক করে ভেরিফাই করুন।", true);
+                    return;
+                }
                 window.showNotification("সফলভাবে লগইন হয়েছে!");
                 window.closeGenericModal('auth-modal');
             } catch(e) {
@@ -1122,7 +1100,6 @@
             }
         };
 
-        // Replaced fake OTP with straightforward Account creation (since magic link is a separate option)
         window.handleEmailRegister = async () => {
             const name = document.getElementById('reg-name').value;
             const phone = document.getElementById('reg-phone').value;
@@ -1132,45 +1109,24 @@
             if(!email || !pass || !name || !phone) return window.showNotification("সকল তথ্য সঠিকভাবে পূরণ করুন!", true);
             
             try {
+                // Create User
                 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 await updateProfile(userCredential.user, { displayName: name });
                 
+                // Save user info locally
                 localStorage.setItem('nai_phone', phone);
                 localStorage.setItem('nai_name', name);
                 
-                window.showNotification("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
-                window.closeGenericModal('auth-modal');
+                // Send Verification Link
+                await sendEmailVerification(userCredential.user);
+                
+                // Sign out instantly so they must verify
+                await signOut(auth);
+                
+                window.showNotification("অ্যাকাউন্ট তৈরি হয়েছে! আপনার ইমেইলে একটি ভেরিফিকেশন লিংক পাঠানো হয়েছে, দয়া করে তা চেক করুন।");
+                window.toggleAuthView('login');
             } catch(e) {
                 window.showNotification(e.message || "অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে!", true);
-            }
-        };
-
-        // NEW: Firebase Email Link Verification (Passwordless Login)
-        window.sendMagicLink = async () => {
-            const email = document.getElementById('magic-email').value;
-            if(!email) return window.showNotification("সঠিক ইমেইল ঠিকানা দিন!", true);
-            
-            const btn = document.getElementById('magic-btn');
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> লিংক পাঠানো হচ্ছে...`;
-
-            const actionCodeSettings = {
-                // Must be a whitelisted URL in Firebase Auth settings
-                url: window.location.origin + window.location.pathname,
-                handleCodeInApp: true
-            };
-
-            try {
-                await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-                window.localStorage.setItem('emailForSignIn', email);
-                window.showNotification("আপনার ইমেইলে ভেরিফিকেশন লিংক পাঠানো হয়েছে! ইনবক্স চেক করুন।");
-                window.closeGenericModal('auth-modal');
-            } catch(error) {
-                window.showNotification("লিংক পাঠাতে সমস্যা হয়েছে!", true);
-                console.error(error);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `ম্যাজিক লিংক পাঠান`;
             }
         };
 
@@ -1362,29 +1318,8 @@
         }
 
         function initRealtimeListeners() {
-            // Authentication State Listener & Email Link Handling
+            // Authentication State Listener
             if (auth) {
-                // Check if user is signing in via Email Link (Passwordless)
-                if (isSignInWithEmailLink(auth, window.location.href)) {
-                    let email = window.localStorage.getItem('emailForSignIn');
-                    if (!email) {
-                        email = window.prompt('নিরাপত্তার জন্য আপনার ইমেইল ঠিকানাটি পুনরায় দিন:');
-                    }
-                    if (email) {
-                        signInWithEmailLink(auth, email, window.location.href)
-                        .then((result) => {
-                            window.localStorage.removeItem('emailForSignIn');
-                            window.showNotification("সফলভাবে লগইন হয়েছে!");
-                            // Clean up the URL
-                            window.history.replaceState(null, '', window.location.pathname);
-                        })
-                        .catch((error) => {
-                            window.showNotification("লিংকটি মেয়াদোত্তীর্ণ বা অকার্যকর!", true);
-                            window.history.replaceState(null, '', window.location.pathname);
-                        });
-                    }
-                }
-
                 onAuthStateChanged(auth, (user) => {
                     const btnLogin = document.getElementById('btn-login');
                     const logoutBtn = document.getElementById('sidebar-logout-btn');
@@ -1964,6 +1899,7 @@
             document.getElementById('mobile-sticky-total').innerText = `৳ ${subtotal}`;
         }
 
+        // Updated Order Submission Data format for complete Admin compatibility
         window.submitFullOrder = async () => {
             if (!currentUser) return window.showNotification("অর্ডার করতে লগইন করুন!", true);
             if (cart.length === 0) return window.showNotification("কার্ট খালি!", true);
@@ -1983,14 +1919,30 @@
             });
 
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const deliveryCharge = 0; // Defaulting to 0 since it shows "নির্ধারিত হবে" in cart
+            const advancePayment = 0;
+            const totalAmount = subtotal + deliveryCharge;
+            const nowIso = new Date().toISOString();
+
+            // Structure data matching exactly what Admin Panel expects
             const orderData = {
                 orderId: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
-                customerInfo: { name, phone, address },
-                items: cart,
+                customer: { name, phone, address }, // Required for unified parsing
+                customerName: name, // Fallback for admin
+                customerPhone: phone, // Fallback for admin
+                customerAddress: address, // Fallback for admin
+                items: cart, // The cart maps naturally (contains imageUrl instead of image, which admin already accepts)
                 subtotal: subtotal,
-                totalAmount: subtotal,
+                deliveryCharge: deliveryCharge, 
+                advancePayment: advancePayment,
+                totalAmount: totalAmount, // Admin Fallback
+                totalPrice: totalAmount, // Used in Admin main analytics
                 status: 'new',
-                createdAt: new Date().toISOString(),
+                createdAt: nowIso,
+                date: nowIso, // Fallback
+                newAt: nowIso,
+                statusUpdatedAt: nowIso,
+                adminNote: "",
                 userId: currentUser ? currentUser.uid : null
             };
 
