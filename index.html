@@ -293,9 +293,9 @@
             <div id="user-menu-links" class="hidden space-y-1 mb-3 pt-2">
                 <div class="px-4 py-2 text-xs font-black text-gray-400 uppercase tracking-wider">আমার অ্যাকাউন্ট</div>
                 <a href="#" onclick="window.openOrderHistory(); return false;" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-primary rounded-xl font-bold transition-colors">
-                    <i class="fa-solid fa-clock-rotate-left w-5 text-center text-gray-400"></i> আমার কার্যক্রম
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center text-gray-400"></i> আমার অর্ডার
                 </a>
-                <a href="#" onclick="window.openGenericModal('wishlist-modal'); return false;" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-primary rounded-xl font-bold transition-colors">
+                <a href="#" onclick="window.openWishlist(); return false;" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-primary rounded-xl font-bold transition-colors">
                     <i class="fa-solid fa-heart w-5 text-center text-gray-400"></i> সেভ করা আইটেম
                 </a>
                 <a href="#" onclick="window.openGenericModal('notifications-modal'); return false;" class="flex justify-between items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-primary rounded-xl font-bold transition-colors">
@@ -453,7 +453,6 @@
             <a href="#" onclick="window.goHomeFromModal('product'); return false;" class="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0">
                 <img src="" class="pub-logo-img hidden h-12 sm:h-16 md:h-20 w-auto max-w-[200px] sm:max-w-[250px] md:max-w-[350px] object-contain transition-transform group-hover:scale-105" alt="Logo" draggable="false">
                 <div class="pub-brand-initial w-10 h-10 sm:w-12 sm:h-12 bg-primary text-white rounded-lg flex items-center justify-center font-bold text-2xl shadow-md transition-transform group-hover:scale-105">N</div>
-                <span class="pub-brand-text font-extrabold text-2xl sm:text-3xl text-primary tracking-tight">Naisargik</span>
             </a>
             <button onclick="window.closeProductModal(true); window.openCart();" class="relative p-2 text-primary hover:bg-emerald-50 rounded-xl transition-all flex items-center justify-center w-10 h-10 ml-auto">
                 <i class="fa-solid fa-bag-shopping text-xl"></i>
@@ -505,7 +504,6 @@
             <a href="#" onclick="window.goHomeFromModal('checkout'); return false;" class="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0">
                 <img src="" class="pub-logo-img hidden h-10 sm:h-12 md:h-16 w-auto max-w-[150px] sm:max-w-[200px] md:max-w-[250px] object-contain transition-transform group-hover:scale-105" alt="Logo" draggable="false">
                 <div class="pub-brand-initial w-10 h-10 sm:w-12 sm:h-12 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-xl sm:text-2xl shadow-md transition-transform group-hover:scale-105">N</div>
-                <span class="pub-brand-text font-extrabold text-xl sm:text-2xl text-primary tracking-tight">Naisargik</span>
             </a>
             <button onclick="window.backToCartFromFullPage()" class="text-gray-600 hover:text-primary bg-white hover:bg-emerald-50 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-colors border border-gray-200 shadow-sm">
                 <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:block">কার্টে ফিরুন</span>
@@ -635,7 +633,6 @@
                 <a href="#" onclick="window.filterCategory('all'); window.scrollTo(0,0); return false;" class="flex items-center gap-3 cursor-pointer inline-block group">
                     <img id="footer-logo" src="" class="pub-logo-img hidden h-20 md:h-28 w-auto max-w-[250px] md:max-w-[300px] object-contain transition-transform group-hover:scale-105" alt="Logo" draggable="false">
                     <div class="pub-brand-initial footer-brand-initial w-16 h-16 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-3xl transition-transform group-hover:scale-105">N</div>
-                    <span id="footer-brand-text" class="pub-brand-text font-extrabold text-3xl md:text-4xl text-white tracking-tight">Naisargik</span>
                 </a>
                 <p data-field="footerAbout" id="public-footer-about" class="text-sm leading-relaxed font-medium text-gray-400 max-w-sm">প্রকৃতির খাঁটি স্বাদ, পৌঁছে যাবে আপনার দুয়ারে। সেরা মানের পণ্য দিয়ে আপনাদের সেবা করাই আমাদের মূল লক্ষ্য।</p>
                 <div class="relative"><div id="social-links-container" class="flex flex-wrap gap-4 items-center"></div></div>
@@ -758,7 +755,7 @@
     <div id="history-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none overscroll-none">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col transform scale-95 transition-all duration-300 pointer-events-auto p-6 max-h-[90vh]">
             <div class="flex justify-between items-center mb-5 border-b border-gray-100 pb-4">
-                <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-primary"></i> আমার কার্যক্রম (হিস্ট্রি)</h3>
+                <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-primary"></i> আমার অর্ডার</h3>
                 <button onclick="window.closeGenericModal('history-modal')" class="text-gray-400 hover:text-red-500 transition-colors p-1.5 hover:bg-gray-50 rounded-full"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <div id="history-content" class="flex-1 overflow-y-auto scrollbar-hide space-y-3 overscroll-contain">
@@ -775,9 +772,8 @@
                 <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2"><i class="fa-solid fa-heart text-red-500"></i> সেভ করা আইটেম</h3>
                 <button onclick="window.closeGenericModal('wishlist-modal')" class="text-gray-400 hover:text-red-500 transition-colors p-1.5 hover:bg-gray-50 rounded-full"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <div class="flex-1 overflow-y-auto flex flex-col items-center justify-center py-10">
-                <i class="fa-solid fa-box-open text-5xl text-gray-200 mb-4"></i>
-                <p class="text-gray-500 font-bold text-sm">কোনো আইটেম সেভ করা নেই।</p>
+            <div id="wishlist-content" class="flex-1 overflow-y-auto overscroll-contain">
+                <!-- Dynamically Populated Wishlist Items -->
             </div>
         </div>
     </div>
@@ -922,6 +918,7 @@
         let activeCategory = 'all';
         let searchQuery = '';
         let cart = [];
+        let favorites = JSON.parse(localStorage.getItem('nai_favorites')) || [];
         let currentSlide = 0;
         let slideInterval;
         let currentModalProduct = null;
@@ -969,7 +966,6 @@
             const overlay = document.getElementById(modalId + '-overlay');
             if(!modal || !overlay) return;
 
-            // Optional: Pre-fill Profile Data
             if(modalId === 'profile-edit-modal') {
                 document.getElementById('edit-profile-name').value = localStorage.getItem('nai_name') || (currentUser ? currentUser.displayName : '');
                 document.getElementById('edit-profile-phone').value = localStorage.getItem('nai_phone') || '';
@@ -1003,6 +999,16 @@
             window.closeGenericModal('profile-edit-modal');
         };
 
+        // Order Tracking from History
+        window.trackSpecificOrder = (orderId) => {
+            window.closeGenericModal('history-modal');
+            setTimeout(() => {
+                window.openTrackModal();
+                document.getElementById('track-order-id').value = orderId;
+                window.searchOrder();
+            }, 300);
+        };
+
         // Order History Fetcher
         window.openOrderHistory = async () => {
             window.closeSidebar();
@@ -1033,9 +1039,9 @@
                                       data.status === 'delivered' ? 'ডেলিভার্ড' : data.status;
                                       
                     html += `
-                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-emerald-200 transition-colors">
+                        <div onclick="window.trackSpecificOrder('${data.orderId}')" class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-emerald-200 transition-colors cursor-pointer group shadow-sm hover:shadow-md">
                             <div class="flex justify-between items-center mb-2">
-                                <span class="font-bold text-gray-800 text-sm">#${data.orderId}</span>
+                                <span class="font-bold text-gray-800 text-sm group-hover:text-primary transition-colors">#${data.orderId}</span>
                                 <span class="text-[10px] sm:text-xs bg-emerald-100 text-primary px-2 py-0.5 rounded-lg font-bold">${statusStr}</span>
                             </div>
                             <div class="flex justify-between items-end mt-3">
@@ -1053,6 +1059,53 @@
             }
         };
 
+        // Wishlist Logics
+        window.toggleFavorite = (event, productId) => {
+            event.stopPropagation();
+            const idx = favorites.indexOf(productId);
+            if(idx > -1) {
+                favorites.splice(idx, 1);
+                window.showNotification("সেভ করা আইটেম থেকে সরানো হয়েছে!");
+            } else {
+                favorites.push(productId);
+                window.showNotification("ফেভারিট হিসেবে যুক্ত করা হয়েছে!");
+            }
+            localStorage.setItem('nai_favorites', JSON.stringify(favorites));
+            renderPublicProducts(); // Re-render main list
+        };
+
+        window.toggleFavoriteFromWishlist = (productId) => {
+            favorites = favorites.filter(id => id !== productId);
+            localStorage.setItem('nai_favorites', JSON.stringify(favorites));
+            window.openWishlist(); // re-render wishlist
+            renderPublicProducts(); // update main page icons
+        };
+
+        window.openWishlist = () => {
+            window.closeSidebar();
+            window.openGenericModal('wishlist-modal');
+            const container = document.getElementById('wishlist-content');
+            
+            if(favorites.length === 0) {
+                container.innerHTML = `<div class="flex-1 flex flex-col items-center justify-center py-10"><i class="fa-solid fa-box-open text-5xl text-gray-200 mb-4"></i><p class="text-gray-500 font-bold text-sm">কোনো আইটেম সেভ করা নেই।</p></div>`;
+                return;
+            }
+            
+            const favProducts = allProducts.filter(p => favorites.includes(p.id));
+            container.innerHTML = `<div class="grid grid-cols-2 gap-3 p-1">` + favProducts.map(p => {
+                 const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || "https://placehold.co/400x400/e2e8f0/64748b?text=Product");
+                 return `
+                    <div class="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm relative group">
+                        <button onclick="window.toggleFavoriteFromWishlist('${p.id}')" class="absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-red-500 shadow-sm z-10 hover:bg-gray-100 transition-colors"><i class="fa-solid fa-heart text-sm"></i></button>
+                        <img src="${imgUrl}" class="w-full aspect-square object-cover cursor-pointer group-hover:scale-105 transition-transform" onclick="window.closeGenericModal('wishlist-modal'); setTimeout(() => window.openProductModal('${p.id}'), 300)">
+                        <div class="p-2.5 cursor-pointer bg-white" onclick="window.closeGenericModal('wishlist-modal'); setTimeout(() => window.openProductModal('${p.id}'), 300)">
+                            <h4 class="text-[11px] md:text-xs font-bold text-gray-800 line-clamp-1 group-hover:text-primary transition-colors">${p.name}</h4>
+                            <div class="text-primary font-black text-xs md:text-sm mt-1">৳ ${p.price}</div>
+                        </div>
+                    </div>
+                 `;
+            }).join('') + `</div>`;
+        };
 
         window.goHomeFromModal = function(modalType) {
             if (modalType === 'product') window.closeProductModalUI();
@@ -1440,11 +1493,17 @@
             container.innerHTML = filtered.map(product => {
                 const imgUrl = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : (product.imageUrl || "https://placehold.co/400x400/e2e8f0/64748b?text=Product");
                 const isOutOfStock = product.stockStatus === 'Out of Stock';
+                const isFav = favorites.includes(product.id);
+                const favIconClass = isFav ? 'fa-solid text-red-500' : 'fa-regular text-gray-400 hover:text-red-500';
                 
                 return `
                     <div onclick="window.openProductModal('${product.id}')" class="product-card bg-white rounded-2xl overflow-hidden flex flex-col relative group cursor-pointer border border-gray-100/80 ${isOutOfStock ? 'opacity-80' : ''}">
                         ${isOutOfStock ? `<div class="absolute top-2 md:top-3 left-2 md:left-3 bg-red-600/90 backdrop-blur text-white text-[9px] md:text-[10px] font-black px-2 py-1 md:px-3 md:py-1.5 rounded-full z-10 shadow-sm uppercase">স্টক শেষ</div>` : ''}
                         
+                        <button onclick="window.toggleFavorite(event, '${product.id}')" class="absolute top-2 md:top-3 right-2 md:right-3 w-7 h-7 md:w-8 md:h-8 bg-white/90 rounded-full flex items-center justify-center shadow-sm z-20 transition-all hover:scale-110">
+                            <i class="${favIconClass} text-sm md:text-base transition-colors"></i>
+                        </button>
+
                         <div class="relative aspect-square w-full bg-[#f8fafc] group-hover:bg-[#f1f5f9] transition-colors flex items-center justify-center overflow-hidden">
                             <img src="${imgUrl}" alt="${product.name}" loading="lazy" decoding="async" draggable="false" class="product-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Product'">
                             <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
