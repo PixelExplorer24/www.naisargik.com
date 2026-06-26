@@ -444,7 +444,7 @@
                 <img src="" class="pub-logo-img hidden h-12 sm:h-16 md:h-20 w-auto max-w-[200px] sm:max-w-[250px] md:max-w-[350px] object-contain transition-transform group-hover:scale-105" alt="Logo" draggable="false">
                 <div class="pub-brand-initial w-10 h-10 sm:w-12 sm:h-12 bg-primary text-white rounded-lg flex items-center justify-center font-bold text-2xl shadow-md transition-transform group-hover:scale-105">N</div>
             </a>
-            <button onclick="window.closeProductModal(true); window.openCart();" class="relative p-2 text-primary hover:bg-emerald-50 rounded-xl transition-all flex items-center justify-center w-10 h-10 ml-auto">
+            <button onclick="window.closeProductModalUI(); window.openCart();" class="relative p-2 text-primary hover:bg-emerald-50 rounded-xl transition-all flex items-center justify-center w-10 h-10 ml-auto">
                 <i class="fa-solid fa-bag-shopping text-xl"></i>
                 <span id="page-cart-count" class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
             </button>
@@ -664,7 +664,7 @@
         </div>
     </div>
 
-    <!-- Alert Modal (UPDATED) -->
+    <!-- Alert Modal -->
     <div id="public-alert-modal-overlay" class="fixed inset-0 bg-black/60 z-[9998] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm" onclick="window.closeAlertModal()"></div>
     <div id="public-alert-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none overscroll-none">
         <div id="public-alert-modal-content" class="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col transform scale-95 transition-all duration-300 pointer-events-auto p-6 md:p-8 text-center max-h-[90vh] overflow-y-auto overscroll-contain">
@@ -676,7 +676,6 @@
                 <span class="text-gray-500 text-sm font-medium">আপনার অর্ডার আইডি:</span>
                 <span id="success-order-id" class="font-black text-primary text-base sm:text-lg ml-2"></span>
             </div>
-            <!-- Removed the warning text block as requested -->
             
             <div class="text-left mb-8 w-full border-t border-gray-100 pt-5">
                 <h3 class="font-bold text-gray-800 mb-4 text-sm flex items-center gap-2"><i class="fa-solid fa-sparkles text-secondary"></i> আপনি হয়তো এগুলোও পছন্দ করতে পারেন:</h3>
@@ -709,7 +708,7 @@
     </div>
 
 
-    <!-- NEW: Auth Modal -->
+    <!-- UPDATED: Auth Modal with Email Link Authentication -->
     <div id="auth-modal-overlay" class="fixed inset-0 bg-black/60 z-[9998] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm" onclick="window.closeGenericModal('auth-modal')"></div>
     <div id="auth-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none overscroll-none">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col transform scale-95 transition-all duration-300 pointer-events-auto p-6 max-h-[90vh] overflow-y-auto">
@@ -718,6 +717,7 @@
                 <button onclick="window.closeGenericModal('auth-modal')" class="text-gray-400 hover:text-red-500 transition-colors p-1.5 hover:bg-gray-50 rounded-full"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
+            <!-- Standard Login View -->
             <div class="space-y-4" id="login-form-view">
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1.5">ইমেইল</label>
@@ -735,18 +735,28 @@
                     <div class="flex-grow border-t border-gray-200"></div>
                 </div>
 
-                <button onclick="window.loginWithGoogle()" class="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-xl shadow-sm transition-all flex justify-center items-center gap-2 text-sm">
-                    <svg class="w-4 h-4" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.7 17.74 9.5 24 9.5z"/>
-                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.2-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                    </svg>
-                    গুগল দিয়ে লগইন
-                </button>
+                <div class="flex flex-col gap-3">
+                    <button onclick="window.loginWithGoogle()" class="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-xl shadow-sm transition-all flex justify-center items-center gap-2 text-sm">
+                        <svg class="w-4 h-4" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.7 17.74 9.5 24 9.5z"/>
+                            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.2-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                        </svg>
+                        গুগল দিয়ে লগইন
+                    </button>
+
+                    <!-- New Button for Email Link (Passwordless) -->
+                    <button onclick="window.toggleAuthView('email-link')" class="w-full bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-primary font-bold py-3 rounded-xl shadow-sm transition-all flex justify-center items-center gap-2 text-sm">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                        ইমেইল লিংক দিয়ে লগইন
+                    </button>
+                </div>
+
                 <p class="text-center text-xs text-gray-500 mt-4">অ্যাকাউন্ট নেই? <span class="text-primary cursor-pointer font-bold hover:underline" onclick="window.toggleAuthView('register')">সাইন আপ করুন</span></p>
             </div>
 
+            <!-- Standard Register View -->
             <div class="space-y-4 hidden" id="register-form-view">
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1.5">আপনার নাম</label>
@@ -764,9 +774,24 @@
                     <label class="block text-xs font-bold text-gray-700 mb-1.5">পাসওয়ার্ড</label>
                     <input type="password" id="reg-password" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-primary font-medium" placeholder="পাসওয়ার্ড লিখুন">
                 </div>
-                <button onclick="window.handleEmailRegister()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 rounded-xl transition-all shadow-md mt-2 flex justify-center items-center gap-2">অ্যাকাউন্ট খুলুন</button>
+                <button onclick="window.handleEmailRegister()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 rounded-xl transition-all shadow-md mt-2 flex justify-center items-center gap-2">সাইন আপ সম্পন্ন করুন</button>
                 <p class="text-center text-xs text-gray-500 mt-4">ইতোমধ্যে অ্যাকাউন্ট আছে? <span class="text-primary cursor-pointer font-bold hover:underline" onclick="window.toggleAuthView('login')">লগইন করুন</span></p>
             </div>
+
+            <!-- Email Link View (Passwordless) -->
+            <div class="space-y-4 hidden" id="email-link-view">
+                <div class="text-center mb-4">
+                    <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3 text-primary text-xl"><i class="fa-solid fa-link"></i></div>
+                    <h4 class="font-bold text-gray-800 text-sm">ইমেইল লিংক ভেরিফিকেশন</h4>
+                    <p class="text-xs text-gray-500 mt-1">আপনার ইমেইল দিন, আমরা লগইন করার জন্য একটি ম্যাজিক লিংক পাঠাবো। পাসওয়ার্ডের প্রয়োজন নেই!</p>
+                </div>
+                <div>
+                    <input type="email" id="magic-email" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-primary font-medium" placeholder="আপনার ইমেইল ঠিকানা">
+                </div>
+                <button id="magic-btn" onclick="window.sendMagicLink()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 rounded-xl transition-all shadow-md mt-2 flex justify-center items-center gap-2">ম্যাজিক লিংক পাঠান</button>
+                <p class="text-center text-xs text-gray-500 mt-4"><span class="text-gray-400 cursor-pointer hover:underline" onclick="window.toggleAuthView('login')"><i class="fa-solid fa-arrow-left"></i> ফিরে যান</span></p>
+            </div>
+
         </div>
     </div>
 
@@ -869,7 +894,7 @@
         </div>
     </div>
 
-    <!-- Settings Modal (UPDATED) -->
+    <!-- Settings Modal -->
     <div id="settings-modal-overlay" class="fixed inset-0 bg-black/60 z-[9998] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm" onclick="window.closeGenericModal('settings-modal')"></div>
     <div id="settings-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none overscroll-none">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col transform scale-95 transition-all duration-300 pointer-events-auto p-6 max-h-[90vh]">
@@ -878,12 +903,10 @@
                 <button onclick="window.closeGenericModal('settings-modal')" class="text-gray-400 hover:text-red-500 transition-colors p-1.5 hover:bg-gray-50 rounded-full"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <div class="flex-1 overflow-y-auto space-y-4">
-                <!-- Removed Email Alert Option -->
                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-gray-100">
                     <div class="font-bold text-sm text-gray-700">ডার্ক মোড</div>
                     <input type="checkbox" class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
                 </div>
-                <!-- Connected Password Change Option -->
                 <button onclick="window.openGenericModal('password-modal')" class="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-100 font-bold text-sm text-gray-700 flex justify-between items-center transition-colors">
                     <span>পাসওয়ার্ড পরিবর্তন</span>
                     <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
@@ -953,7 +976,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, onSnapshot, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // Updated Imports to include Email Link Methods
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, updateProfile, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBTF9qOouM1d6SwfBqI0n7ytQRr5ROEj0k",
@@ -1062,19 +1086,26 @@
             window.closeGenericModal('profile-edit-modal');
         };
 
-        // --- Auth logics (Email / Phone / Pass / Google) ---
+        // --- Auth logics (Email / Link / Pass / Google) ---
         window.toggleAuthView = (view) => {
             const loginView = document.getElementById('login-form-view');
             const regView = document.getElementById('register-form-view');
+            const emailLinkView = document.getElementById('email-link-view');
             const title = document.getElementById('auth-modal-title');
+            
+            loginView.classList.add('hidden');
+            regView.classList.add('hidden');
+            emailLinkView.classList.add('hidden');
+
             if (view === 'login') {
                 loginView.classList.remove('hidden');
-                regView.classList.add('hidden');
                 title.innerText = "লগইন করুন";
-            } else {
-                loginView.classList.add('hidden');
+            } else if (view === 'register') {
                 regView.classList.remove('hidden');
                 title.innerText = "নতুন অ্যাকাউন্ট খুলুন";
+            } else if (view === 'email-link') {
+                emailLinkView.classList.remove('hidden');
+                title.innerText = "ইমেইল লিংক দিয়ে লগইন";
             }
         };
 
@@ -1091,6 +1122,7 @@
             }
         };
 
+        // Replaced fake OTP with straightforward Account creation (since magic link is a separate option)
         window.handleEmailRegister = async () => {
             const name = document.getElementById('reg-name').value;
             const phone = document.getElementById('reg-phone').value;
@@ -1102,7 +1134,7 @@
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 await updateProfile(userCredential.user, { displayName: name });
-                // Saving extra fields in localStorage to act as a profile
+                
                 localStorage.setItem('nai_phone', phone);
                 localStorage.setItem('nai_name', name);
                 
@@ -1110,6 +1142,35 @@
                 window.closeGenericModal('auth-modal');
             } catch(e) {
                 window.showNotification(e.message || "অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে!", true);
+            }
+        };
+
+        // NEW: Firebase Email Link Verification (Passwordless Login)
+        window.sendMagicLink = async () => {
+            const email = document.getElementById('magic-email').value;
+            if(!email) return window.showNotification("সঠিক ইমেইল ঠিকানা দিন!", true);
+            
+            const btn = document.getElementById('magic-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> লিংক পাঠানো হচ্ছে...`;
+
+            const actionCodeSettings = {
+                // Must be a whitelisted URL in Firebase Auth settings
+                url: window.location.origin + window.location.pathname,
+                handleCodeInApp: true
+            };
+
+            try {
+                await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+                window.localStorage.setItem('emailForSignIn', email);
+                window.showNotification("আপনার ইমেইলে ভেরিফিকেশন লিংক পাঠানো হয়েছে! ইনবক্স চেক করুন।");
+                window.closeGenericModal('auth-modal');
+            } catch(error) {
+                window.showNotification("লিংক পাঠাতে সমস্যা হয়েছে!", true);
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `ম্যাজিক লিংক পাঠান`;
             }
         };
 
@@ -1215,6 +1276,13 @@
         // Wishlist Logics
         window.toggleFavorite = (event, productId) => {
             event.stopPropagation();
+            
+            if(!currentUser) {
+                window.openGenericModal('auth-modal');
+                window.showNotification("ফেভারিট যুক্ত করতে আগে লগইন করুন!", true);
+                return;
+            }
+
             const idx = favorites.indexOf(productId);
             if(idx > -1) {
                 favorites.splice(idx, 1);
@@ -1224,14 +1292,14 @@
                 window.showNotification("ফেভারিট হিসেবে যুক্ত করা হয়েছে!");
             }
             localStorage.setItem('nai_favorites', JSON.stringify(favorites));
-            renderPublicProducts(); // Re-render main list
+            renderPublicProducts(); 
         };
 
         window.toggleFavoriteFromWishlist = (productId) => {
             favorites = favorites.filter(id => id !== productId);
             localStorage.setItem('nai_favorites', JSON.stringify(favorites));
-            window.openWishlist(); // re-render wishlist
-            renderPublicProducts(); // update main page icons
+            window.openWishlist(); 
+            renderPublicProducts(); 
         };
 
         window.openWishlist = () => {
@@ -1294,8 +1362,29 @@
         }
 
         function initRealtimeListeners() {
-            // Authentication State Listener
+            // Authentication State Listener & Email Link Handling
             if (auth) {
+                // Check if user is signing in via Email Link (Passwordless)
+                if (isSignInWithEmailLink(auth, window.location.href)) {
+                    let email = window.localStorage.getItem('emailForSignIn');
+                    if (!email) {
+                        email = window.prompt('নিরাপত্তার জন্য আপনার ইমেইল ঠিকানাটি পুনরায় দিন:');
+                    }
+                    if (email) {
+                        signInWithEmailLink(auth, email, window.location.href)
+                        .then((result) => {
+                            window.localStorage.removeItem('emailForSignIn');
+                            window.showNotification("সফলভাবে লগইন হয়েছে!");
+                            // Clean up the URL
+                            window.history.replaceState(null, '', window.location.pathname);
+                        })
+                        .catch((error) => {
+                            window.showNotification("লিংকটি মেয়াদোত্তীর্ণ বা অকার্যকর!", true);
+                            window.history.replaceState(null, '', window.location.pathname);
+                        });
+                    }
+                }
+
                 onAuthStateChanged(auth, (user) => {
                     const btnLogin = document.getElementById('btn-login');
                     const logoutBtn = document.getElementById('sidebar-logout-btn');
@@ -1304,7 +1393,6 @@
                     
                     if (user) {
                         currentUser = user;
-                        // User is signed in
                         if(btnLogin) btnLogin.classList.add('hidden');
                         if(logoutBtn) logoutBtn.classList.remove('hidden');
                         
@@ -1317,7 +1405,6 @@
                         if(userMenuLinks) userMenuLinks.classList.remove('hidden');
                     } else {
                         currentUser = null;
-                        // User is signed out
                         if(btnLogin) btnLogin.classList.remove('hidden');
                         if(logoutBtn) logoutBtn.classList.add('hidden');
                         if(profileSummary) profileSummary.classList.add('hidden');
@@ -1331,12 +1418,10 @@
             onSnapshot(doc(db, "settings", "general"), (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.data();
-
                     if (data.logoUrl) {
                         document.querySelectorAll('.pub-logo-img').forEach(el => { el.src = data.logoUrl; el.classList.remove('hidden'); });
                         document.querySelectorAll('.pub-brand-initial').forEach(el => el.classList.add('hidden')); 
                     }
-
                     if (data.shortLogoUrl) {
                         const favicon = document.getElementById('dynamic-favicon');
                         if (favicon) favicon.href = data.shortLogoUrl;
@@ -1348,7 +1433,6 @@
                         }
                         const loaderDefaultIcon = document.getElementById('loader-default-icon');
                         if(loaderDefaultIcon) loaderDefaultIcon.classList.add('hidden');
-
                         localStorage.setItem('publicShortLogo', data.shortLogoUrl);
                     } else {
                         localStorage.removeItem('publicShortLogo');
@@ -1581,7 +1665,6 @@
             if(!container) return;
 
             const filterSortVal = document.getElementById('filter-sort')?.value || 'default';
-
             let filtered = activeCategory === 'all' ? allProducts : allProducts.filter(p => p.category === activeCategory);
 
             if (searchQuery) {
@@ -1622,9 +1705,9 @@
                 const imgUrl = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : (product.imageUrl || "https://placehold.co/400x400/e2e8f0/64748b?text=Product");
                 const isOutOfStock = product.stockStatus === 'Out of Stock';
                 const isFav = favorites.includes(product.id);
-                // Clear visible heart icon design
                 const favIconClass = isFav ? 'fa-solid fa-heart text-red-500' : 'fa-regular fa-heart text-black';
 
+                // UPDATED: Added direct Buy Now button alongside Add to Cart
                 return `
                     <div class="product-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm relative group flex flex-col h-full cursor-pointer" onclick="window.openProductModal('${product.id}')">
                         <button onclick="window.toggleFavorite(event, '${product.id}')" class="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10 hover:bg-gray-100 transition-colors border border-gray-200">
@@ -1639,20 +1722,35 @@
                         <div class="p-3 sm:p-4 flex flex-col flex-1">
                             <div class="text-[10px] sm:text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">${product.category || 'Category'}</div>
                             <h4 class="text-xs sm:text-sm md:text-base font-bold text-gray-800 line-clamp-2 mb-2 group-hover:text-primary transition-colors leading-snug">${product.name}</h4>
-                            <div class="mt-auto flex justify-between items-end">
+                            
+                            <!-- Action Buttons -->
+                            <div class="mt-auto flex justify-between items-end gap-1">
                                 <div>
                                     <div class="text-primary font-black text-sm sm:text-base md:text-lg">৳ ${product.price}</div>
                                     ${product.regularPrice ? `<div class="text-xs text-gray-400 line-through font-medium">৳ ${product.regularPrice}</div>` : ''}
                                 </div>
-                                <button onclick="event.stopPropagation(); window.addToCart('${product.id}')" class="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-50 text-primary rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-colors border border-emerald-100 shadow-sm" ${isOutOfStock ? 'disabled' : ''}>
-                                    <i class="fa-solid fa-plus text-sm sm:text-base"></i>
-                                </button>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <button onclick="event.stopPropagation(); window.buyNowDirectly('${product.id}')" class="w-8 h-8 sm:w-9 sm:h-9 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-primaryHover transition-colors shadow-sm" title="এখনই কিনুন" ${isOutOfStock ? 'disabled' : ''}>
+                                        <i class="fa-solid fa-bolt text-xs sm:text-sm"></i>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); window.addToCart('${product.id}')" class="w-8 h-8 sm:w-9 sm:h-9 bg-emerald-50 text-primary rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-colors border border-emerald-100 shadow-sm" title="কার্টে যোগ করুন" ${isOutOfStock ? 'disabled' : ''}>
+                                        <i class="fa-solid fa-cart-plus text-xs sm:text-sm"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
         }
+
+        // NEW: Buy Now Directly feature
+        window.buyNowDirectly = (productId) => {
+            window.addToCart(productId, 1);
+            setTimeout(() => {
+                window.openFullCheckout();
+            }, 250);
+        };
 
         function renderFooterLinks() {
             const usefulLinksContainer = document.getElementById('useful-links-container');
@@ -1798,12 +1896,27 @@
         };
 
         window.proceedToCheckout = () => {
+            if(!currentUser) {
+                window.closeCart();
+                setTimeout(() => {
+                    window.openGenericModal('auth-modal');
+                    window.showNotification('অর্ডার করতে আগে লগইন করুন!', true);
+                }, 300);
+                return;
+            }
             window.closeCart();
-            window.openFullCheckout();
+            setTimeout(() => window.openFullCheckout(), 300);
         };
 
         window.openFullCheckout = (skipPush = false) => {
+            if(!currentUser) {
+                window.openGenericModal('auth-modal');
+                window.showNotification("অর্ডার করতে আগে লগইন করুন!", true);
+                return;
+            }
+
             if(cart.length === 0) return window.showNotification("আপনার কার্ট খালি!");
+            
             if(!skipPush) window.safePushState('#checkout');
             const page = document.getElementById('full-checkout-page');
             page.classList.remove('hidden');
@@ -1852,6 +1965,7 @@
         }
 
         window.submitFullOrder = async () => {
+            if (!currentUser) return window.showNotification("অর্ডার করতে লগইন করুন!", true);
             if (cart.length === 0) return window.showNotification("কার্ট খালি!", true);
 
             const name = document.getElementById('full-cust-name').value;
@@ -2086,6 +2200,12 @@
         };
 
         window.buyNowFromModal = () => {
+            if(!currentUser) {
+                window.openGenericModal('auth-modal');
+                window.showNotification("অর্ডার করতে আগে লগইন করুন!", true);
+                return;
+            }
+
             if(!currentModalProduct) return;
             window.addToCart(currentModalProduct.id, 1, selectedVariant);
             window.closeProductModalUI();
