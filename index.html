@@ -952,8 +952,7 @@
     <!-- FIREBASE SDKS & LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, onSnapshot, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        // Updated Imports (Removed Magic Link methods and added sendEmailVerification)
+        import { getFirestore, collection, addDoc, doc, setDoc, getDoc, onSnapshot, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -973,7 +972,7 @@
             db = getFirestore(app);
             auth = getAuth(app);
             provider = new GoogleAuthProvider();
-            initRealtimeListeners(); // Initialize logic after setup
+            initRealtimeListeners(); 
         } catch (e) {
             console.error("Firebase startup failed.");
         }
@@ -1052,13 +1051,28 @@
             setTimeout(() => { overlay.classList.add('hidden'); modal.classList.add('hidden'); }, 300);
         };
 
-        window.saveProfileEdit = () => {
+        window.saveProfileEdit = async () => {
             const name = document.getElementById('edit-profile-name').value;
             const phone = document.getElementById('edit-profile-phone').value;
             const address = document.getElementById('edit-profile-address').value;
             localStorage.setItem('nai_name', name);
             localStorage.setItem('nai_phone', phone);
             localStorage.setItem('nai_address', address);
+            
+            // নতুন রুলস অনুযায়ী কাস্টমার্স কালেকশনে ডেটা সেভ করা
+            if (currentUser) {
+                try {
+                    await setDoc(doc(db, "customers", currentUser.uid), {
+                        name: name,
+                        phone: phone,
+                        address: address,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+                } catch (e) {
+                    console.error("Profile save error:", e);
+                }
+            }
+            
             window.showNotification('প্রোফাইল সফলভাবে আপডেট হয়েছে!');
             window.closeGenericModal('profile-edit-modal');
         };
@@ -1087,9 +1101,8 @@
             if(!email || !pass) return window.showNotification("ইমেইল এবং পাসওয়ার্ড লিখুন!", true);
             try {
                 const userCred = await signInWithEmailAndPassword(auth, email, pass);
-                // Check if email is verified
                 if (!userCred.user.emailVerified) {
-                    await signOut(auth); // Sign out if not verified
+                    await signOut(auth); 
                     window.showNotification("আপনার অ্যাকাউন্টটি এখনো ভেরিফাই করা হয়নি! দয়া করে আপনার ইমেইল চেক করে ভেরিফাই করুন।", true);
                     return;
                 }
@@ -1109,18 +1122,13 @@
             if(!email || !pass || !name || !phone) return window.showNotification("সকল তথ্য সঠিকভাবে পূরণ করুন!", true);
             
             try {
-                // Create User
                 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 await updateProfile(userCredential.user, { displayName: name });
                 
-                // Save user info locally
                 localStorage.setItem('nai_phone', phone);
                 localStorage.setItem('nai_name', name);
                 
-                // Send Verification Link
                 await sendEmailVerification(userCredential.user);
-                
-                // Sign out instantly so they must verify
                 await signOut(auth);
                 
                 window.showNotification("অ্যাকাউন্ট তৈরি হয়েছে! আপনার ইমেইলে একটি ভেরিফিকেশন লিংক পাঠানো হয়েছে, দয়া করে তা চেক করুন।");
@@ -1320,14 +1328,36 @@
         function initRealtimeListeners() {
             // Authentication State Listener
             if (auth) {
-                onAuthStateChanged(auth, (user) => {
+                onAuthStateChanged(auth, async (user) => {
+                    const ADMIN_UID = "dplzPL8hrcU9wL7j47r3hNDXuV53";
                     const btnLogin = document.getElementById('btn-login');
                     const logoutBtn = document.getElementById('sidebar-logout-btn');
                     const profileSummary = document.getElementById('sidebar-profile-summary');
                     const userMenuLinks = document.getElementById('user-menu-links');
                     
                     if (user) {
+                        // অ্যাডমিনকে সাধারণ সাইটে লগইন করা থেকে বিরত রাখা
+                        if (user.uid === ADMIN_UID) {
+                            await signOut(auth);
+                            window.showNotification("অ্যাডমিন অ্যাকাউন্ট দিয়ে সাধারণ ব্যবহারকারী হিসেবে লগইন করা যাবে না!", true);
+                            return;
+                        }
+
                         currentUser = user;
+                        
+                        // ডাটাবেজ থেকে কাস্টমার ইনফো ফেচ করে লোকাল স্টোরেজে রাখা
+                        try {
+                            const custDoc = await getDoc(doc(db, "customers", user.uid));
+                            if (custDoc.exists()) {
+                                const data = custDoc.data();
+                                if (data.name) localStorage.setItem('nai_name', data.name);
+                                if (data.phone) localStorage.setItem('nai_phone', data.phone);
+                                if (data.address) localStorage.setItem('nai_address', data.address);
+                            }
+                        } catch (e) {
+                            console.error(e);
+                        }
+
                         if(btnLogin) btnLogin.classList.add('hidden');
                         if(logoutBtn) logoutBtn.classList.remove('hidden');
                         
@@ -1919,7 +1949,7 @@
             });
 
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const deliveryCharge = 0; // Defaulting to 0 since it shows "নির্ধারিত হবে" in cart
+            const deliveryCharge = 0; 
             const advancePayment = 0;
             const totalAmount = subtotal + deliveryCharge;
             const nowIso = new Date().toISOString();
@@ -1931,7 +1961,7 @@
                 customerName: name, // Fallback for admin
                 customerPhone: phone, // Fallback for admin
                 customerAddress: address, // Fallback for admin
-                items: cart, // The cart maps naturally (contains imageUrl instead of image, which admin already accepts)
+                items: cart, // The cart maps naturally
                 subtotal: subtotal,
                 deliveryCharge: deliveryCharge, 
                 advancePayment: advancePayment,
@@ -1947,6 +1977,14 @@
             };
 
             try {
+                // কাস্টমার প্রোফাইল আপডেট করে দেওয়া (নতুন রুলস অনুযায়ী)
+                await setDoc(doc(db, "customers", currentUser.uid), {
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    updatedAt: nowIso
+                }, { merge: true });
+
                 await addDoc(collection(db, "orders"), orderData);
                 cart = [];
                 updateCartCount();
