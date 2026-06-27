@@ -279,7 +279,7 @@
                 <a href="#" onclick="window.openWishlist(); return false;" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-primary rounded-xl font-bold transition-colors">
                     <i class="fa-solid fa-heart w-5 text-center text-gray-400"></i> সেভ করা আইটেম
                 </a>
-                <a href="#" onclick="window.openGenericModal('settings-modal'); return false;" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-primary rounded-xl font-bold transition-colors">
+                <a href="#" onclick="window.openGenericModal('profile-edit-modal'); return false;" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-primary rounded-xl font-bold transition-colors">
                     <i class="fa-solid fa-gear w-5 text-center text-gray-400"></i> অ্যাকাউন্ট সেটিংস
                 </a>
             </div>
@@ -438,7 +438,6 @@
                 <img src="" class="pub-logo-img hidden h-10 sm:h-12 w-auto max-w-[150px] object-contain transition-transform group-hover:scale-105" alt="Logo">
                 <div class="pub-brand-initial w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-md transition-transform group-hover:scale-105">N</div>
             </a>
-            <!-- FIX: Go back to cart instead of closing completely -->
             <button onclick="window.returnToCartFromCheckout();" class="text-gray-600 hover:text-primary bg-white hover:bg-emerald-50 px-3 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors border border-gray-200 shadow-sm">
                 <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:block">কার্টে ফিরুন</span>
             </button>
@@ -771,6 +770,12 @@
             setTimeout(() => { overlay.classList.add('hidden'); modal.classList.add('hidden'); }, 300);
         };
 
+        // Go home from full page modals
+        window.goHomeFromModal = (type) => {
+            if(type === 'product') window.closeProductModalUI();
+            if(type === 'checkout') window.closeFullCheckoutUI();
+        };
+
         window.showNotification = function(message, isError = false) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toast-message');
@@ -1011,6 +1016,7 @@
             if(idx > -1) { favorites.splice(idx, 1); window.showNotification("রিমুভ করা হয়েছে!"); } 
             else { favorites.push(productId); window.showNotification("ফেভারিটে যুক্ত হয়েছে!"); }
             syncCloudData(); // Sync to firestore
+            renderPublicProducts(); // BUG 4: Re-render UI to update Heart icon color immediately
         };
 
         window.openWishlist = () => {
@@ -1063,6 +1069,7 @@
                 });
             }
             syncCloudData(); // Sync to firestore
+            updateCartCount(); // BUG 1: Call update Cart Count dynamically
             window.showNotification("কার্টে যুক্ত করা হয়েছে!");
         };
 
@@ -1125,30 +1132,30 @@
         window.updateCartQty = (index, delta) => { 
             if(cart[index]) { 
                 cart[index].quantity += delta; 
-                // Ensure quantity doesn't go below 1, if it's 0 or less, remove it
                 if(cart[index].quantity <= 0) {
                     cart.splice(index, 1); 
                 }
                 syncCloudData(); 
-                window.renderCart(); // Re-render to reflect changes immediately
+                updateCartCount(); // BUG 1: Call update Cart Count dynamically
+                window.renderCart(); 
                 if (!document.getElementById('full-checkout-page').classList.contains('hidden')) {
-                    renderFullCheckoutItems(); // Also update checkout page if open
+                    renderFullCheckoutItems(); 
                 }
             } 
         };
         window.removeFromCart = (index) => { 
             cart.splice(index, 1); 
-            syncCloudData(); 
-            window.renderCart(); // Re-render to reflect changes immediately
+            syncCloudData();
+            updateCartCount(); // BUG 1: Call update Cart Count dynamically
+            window.renderCart(); 
             if (!document.getElementById('full-checkout-page').classList.contains('hidden')) {
-                renderFullCheckoutItems(); // Also update checkout page if open
+                renderFullCheckoutItems(); 
             }
         };
 
         window.proceedToCheckout = () => { window.closeCart(); setTimeout(() => window.openFullCheckout(), 300); };
         window.buyNowDirectly = (productId) => { window.addToCart(productId, 1); setTimeout(() => { window.openFullCheckout(); }, 250); };
 
-        // FIX: Added function to return to cart from checkout
         window.returnToCartFromCheckout = () => {
             window.closeFullCheckoutUI();
             setTimeout(() => {
@@ -1189,7 +1196,6 @@
                             <div class="text-xs text-gray-500 font-medium mt-0.5">৳ ${item.price}</div>
                         </div>
                         
-                        <!-- FIX: Added Quantity Controls in Checkout -->
                         <div class="flex items-center border border-gray-200 rounded-lg bg-gray-50 overflow-hidden shadow-inner mx-2">
                             <button onclick="window.updateCartQty(${index}, -1)" class="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-200"><i class="fa-solid fa-minus text-[8px]"></i></button>
                             <span class="w-6 text-center font-bold text-xs text-gray-800">${item.quantity}</span>
@@ -1204,7 +1210,6 @@
             document.getElementById('full-total').innerText = `৳ ${subtotal}`;
             document.getElementById('mobile-sticky-total').innerText = `৳ ${subtotal}`;
             
-            // If cart becomes empty during checkout, close it
             if(cart.length === 0) {
                 window.closeFullCheckoutUI();
                 window.showNotification("আপনার কার্ট খালি হয়ে গেছে!", true);
@@ -1220,7 +1225,6 @@
             const address = document.getElementById('full-cust-address').value;
             if (!name || !phone || !address) return window.showNotification("দয়া করে সকল তথ্য দিন!", true);
 
-            // Input Validation checks for admin dynamically as well 
             if(checkAdminStatus(currentUser.uid)) return;
 
             const buttons = document.querySelectorAll('.submit-btn-sync');
@@ -1238,7 +1242,8 @@
                     status: 'new', createdAt: nowIso, date: nowIso, newAt: nowIso, statusUpdatedAt: nowIso, adminNote: "", userId: currentUser.uid
                 });
                 
-                cart = []; // Empty local memory cart immediately 
+                cart = []; 
+                updateCartCount();
                 window.closeFullCheckoutUI();
                 
                 setTimeout(() => {
@@ -1299,7 +1304,7 @@
                 return `
                     <div class="product-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm relative group flex flex-col h-full cursor-pointer" onclick="window.openProductModal('${product.id}')">
                         <button onclick="window.toggleFavorite(event, '${product.id}')" class="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-gray-200">
-                            <i class="${isFav ? 'fa-solid fa-heart text-red-500' : 'fa-regular fa-heart text-black'} text-lg"></i>
+                            <i class="${isFav ? 'fa-solid fa-heart text-red-500' : 'fa-regular fa-heart text-black'} text-lg transition-colors"></i>
                         </button>
                         <div class="relative w-full pt-[100%] bg-[#f8fafc] overflow-hidden">
                             <img src="${(product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : product.imageUrl}" class="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
@@ -1309,12 +1314,11 @@
                             <div class="text-[10px] sm:text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">${product.category || 'Category'}</div>
                             <h4 class="text-xs sm:text-sm md:text-base font-bold text-gray-800 line-clamp-2 mb-2 leading-snug">${product.name}</h4>
                             <div class="mt-auto flex justify-between items-end gap-1">
-                                <div class="mb-6"> <!-- Added margin bottom to avoid overlapping with absolute button -->
+                                <div class="mb-6">
                                     <div class="text-primary font-black text-sm sm:text-base md:text-lg">৳ ${product.price}</div>
                                     ${product.regularPrice ? `<div class="text-xs text-gray-400 line-through font-medium">৳ ${product.regularPrice}</div>` : ''}
                                 </div>
                             </div>
-                            <!-- FIX: Absolute positioned cart icon to be under the card inside -->
                             <div class="absolute bottom-3 right-3 shrink-0">
                                 <button onclick="event.stopPropagation(); window.buyNowDirectly('${product.id}')" class="w-8 h-8 sm:w-9 sm:h-9 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-primaryHover shadow-sm" title="এখনই কিনুন" ${isOutOfStock ? 'disabled' : ''}><i class="fa-solid fa-cart-plus text-xs"></i></button>
                             </div>
@@ -1490,6 +1494,121 @@
             const page = document.getElementById('product-details-page'); page.classList.remove('hidden'); setTimeout(() => { page.classList.remove('opacity-0'); page.classList.add('opacity-100'); }, 10);
         };
         window.closeProductModalUI = () => { const page = document.getElementById('product-details-page'); page.classList.remove('opacity-100'); page.classList.add('opacity-0'); setTimeout(() => { page.classList.add('hidden'); }, 300); };
+        
+        // BUG 2 FIX: Order Tracking Implementation
+        window.openTrackModal = () => {
+            window.closeSidebar();
+            document.getElementById('track-order-id').value = '';
+            document.getElementById('track-result').innerHTML = '';
+            document.getElementById('track-result').classList.add('hidden');
+            window.openGenericModal('track-modal');
+        };
+        
+        window.closeTrackModal = () => { window.closeGenericModal('track-modal'); };
+        
+        window.searchOrder = async () => {
+            const trackId = document.getElementById('track-order-id').value.trim();
+            if(!trackId) return window.showNotification("অর্ডার আইডি লিখুন", true);
+            
+            const resultDiv = document.getElementById('track-result');
+            resultDiv.innerHTML = `<div class="text-center py-4"><i class="fa-solid fa-spinner animate-spin text-primary text-2xl"></i></div>`;
+            resultDiv.classList.remove('hidden');
+            
+            try {
+                const q = query(collection(db, "orders"), where("orderId", "==", trackId));
+                const querySnapshot = await getDocs(q);
+                
+                if(querySnapshot.empty) {
+                    resultDiv.innerHTML = `<div class="text-red-500 text-center font-bold py-4">এই আইডির কোনো অর্ডার পাওয়া যায়নি।</div>`;
+                    return;
+                }
+                
+                const orderData = querySnapshot.docs[0].data();
+                let statusText = "প্রসেসিং হচ্ছে";
+                let statusColor = "text-amber-500";
+                
+                if(orderData.status === 'new') { statusText = "নতুন অর্ডার"; statusColor = "text-blue-500"; }
+                else if(orderData.status === 'processing') { statusText = "প্রসেসিং হচ্ছে"; statusColor = "text-amber-500"; }
+                else if(orderData.status === 'shipped') { statusText = "ডেলিভারিতে আছে"; statusColor = "text-indigo-500"; }
+                else if(orderData.status === 'delivered') { statusText = "ডেলিভারি সম্পন্ন"; statusColor = "text-emerald-500"; }
+                else if(orderData.status === 'cancelled') { statusText = "ক্যান্সেল করা হয়েছে"; statusColor = "text-red-500"; }
+                
+                resultDiv.innerHTML = `
+                    <div class="bg-gray-50 p-4 rounded-xl mt-4 border border-gray-100 shadow-inner">
+                        <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
+                            <span class="text-gray-500 text-sm font-medium">অর্ডার আইডি:</span>
+                            <span class="font-black text-gray-800">${orderData.orderId}</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
+                            <span class="text-gray-500 text-sm font-medium">সর্বমোট মূল্য:</span>
+                            <span class="font-black text-primary">৳ ${orderData.totalAmount || orderData.totalPrice}</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-1">
+                            <span class="text-gray-500 text-sm font-medium">বর্তমান অবস্থা:</span>
+                            <span class="font-black ${statusColor}">${statusText}</span>
+                        </div>
+                    </div>
+                `;
+            } catch (e) {
+                resultDiv.innerHTML = `<div class="text-red-500 text-center font-bold py-4">সার্ভার এরর! আবার চেষ্টা করুন।</div>`;
+            }
+        };
+
+        // BUG 3 FIX: User Order History Implementation
+        window.openOrderHistory = async () => {
+            window.closeSidebar();
+            if(!currentUser) return window.showNotification("আগে লগইন করুন!", true);
+
+            window.openGenericModal('history-modal');
+            const container = document.getElementById('history-content');
+            container.innerHTML = `<div class="flex justify-center py-10"><i class="fa-solid fa-spinner animate-spin text-3xl text-primary"></i></div>`;
+
+            try {
+                const q = query(collection(db, "orders"), where("userId", "==", currentUser.uid));
+                const querySnapshot = await getDocs(q);
+
+                if(querySnapshot.empty) {
+                    container.innerHTML = `<div class="text-center text-gray-500 py-10 font-bold"><i class="fa-solid fa-box-open text-4xl mb-3 text-gray-300 block"></i>কোনো অর্ডার পাওয়া যায়নি।</div>`;
+                    return;
+                }
+
+                let orders = [];
+                querySnapshot.forEach(doc => orders.push(doc.data()));
+                // Sort by date descending (Newest first)
+                orders.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                container.innerHTML = orders.map(order => {
+                    let statusText = "প্রসেসিং";
+                    let bg = "bg-amber-100 text-amber-700";
+                    if(order.status === 'new') { statusText = "নতুন"; bg = "bg-blue-100 text-blue-700"; }
+                    else if(order.status === 'processing') { statusText = "প্রসেসিং"; bg = "bg-amber-100 text-amber-700"; }
+                    else if(order.status === 'shipped') { statusText = "ডেলিভারিতে"; bg = "bg-indigo-100 text-indigo-700"; }
+                    else if(order.status === 'delivered') { statusText = "সম্পন্ন"; bg = "bg-emerald-100 text-emerald-700"; }
+                    else if(order.status === 'cancelled') { statusText = "ক্যান্সেল"; bg = "bg-red-100 text-red-700"; }
+
+                    let dateStr = new Date(order.createdAt).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                    return `
+                        <div class="bg-white border border-gray-100 shadow-sm p-4 rounded-xl mb-3 relative">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <div class="font-bold text-gray-800 text-sm tracking-wide">${order.orderId}</div>
+                                    <div class="text-xs text-gray-500 mt-1 font-medium">${dateStr}</div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-md text-[10px] font-black ${bg}">${statusText}</span>
+                            </div>
+                            <div class="border-t border-gray-100 pt-3 mt-2 flex justify-between items-center">
+                                <span class="text-xs text-gray-500 font-medium">${order.items?.length || 0} টি আইটেম</span>
+                                <span class="font-black text-primary text-base">৳ ${order.totalAmount || order.totalPrice}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch(e) {
+                container.innerHTML = `<div class="text-center text-red-500 py-10 font-bold">ডাটা লোড করতে সমস্যা হয়েছে!</div>`;
+            }
+        };
     </script>
 </body>
 </html>
