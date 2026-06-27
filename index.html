@@ -438,7 +438,8 @@
                 <img src="" class="pub-logo-img hidden h-10 sm:h-12 w-auto max-w-[150px] object-contain transition-transform group-hover:scale-105" alt="Logo">
                 <div class="pub-brand-initial w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-md transition-transform group-hover:scale-105">N</div>
             </a>
-            <button onclick="window.closeFullCheckoutUI();" class="text-gray-600 hover:text-primary bg-white hover:bg-emerald-50 px-3 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors border border-gray-200 shadow-sm">
+            <!-- FIX: Go back to cart instead of closing completely -->
+            <button onclick="window.returnToCartFromCheckout();" class="text-gray-600 hover:text-primary bg-white hover:bg-emerald-50 px-3 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors border border-gray-200 shadow-sm">
                 <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:block">কার্টে ফিরুন</span>
             </button>
         </header>
@@ -647,7 +648,7 @@
         </div>
     </div>
 
-    <!-- Track Order Modal, Settings, etc (Simplified for layout, fully functional via JS) -->
+    <!-- Track Order Modal, Settings, etc -->
     <div id="track-modal-overlay" class="fixed inset-0 bg-black/60 z-[9998] hidden" onclick="window.closeTrackModal()"></div>
     <div id="track-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 pointer-events-none overscroll-none">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col transform scale-95 transition-all duration-300 pointer-events-auto p-5 text-center">
@@ -1121,11 +1122,39 @@
             totalEl.innerText = `৳ ${total}`;
         };
 
-        window.updateCartQty = (index, delta) => { if(cart[index]) { cart[index].quantity += delta; if(cart[index].quantity <= 0) cart.splice(index, 1); syncCloudData(); } };
-        window.removeFromCart = (index) => { cart.splice(index, 1); syncCloudData(); };
+        window.updateCartQty = (index, delta) => { 
+            if(cart[index]) { 
+                cart[index].quantity += delta; 
+                // Ensure quantity doesn't go below 1, if it's 0 or less, remove it
+                if(cart[index].quantity <= 0) {
+                    cart.splice(index, 1); 
+                }
+                syncCloudData(); 
+                window.renderCart(); // Re-render to reflect changes immediately
+                if (!document.getElementById('full-checkout-page').classList.contains('hidden')) {
+                    renderFullCheckoutItems(); // Also update checkout page if open
+                }
+            } 
+        };
+        window.removeFromCart = (index) => { 
+            cart.splice(index, 1); 
+            syncCloudData(); 
+            window.renderCart(); // Re-render to reflect changes immediately
+            if (!document.getElementById('full-checkout-page').classList.contains('hidden')) {
+                renderFullCheckoutItems(); // Also update checkout page if open
+            }
+        };
 
         window.proceedToCheckout = () => { window.closeCart(); setTimeout(() => window.openFullCheckout(), 300); };
         window.buyNowDirectly = (productId) => { window.addToCart(productId, 1); setTimeout(() => { window.openFullCheckout(); }, 250); };
+
+        // FIX: Added function to return to cart from checkout
+        window.returnToCartFromCheckout = () => {
+            window.closeFullCheckoutUI();
+            setTimeout(() => {
+                window.openCart();
+            }, 300);
+        }
 
         window.openFullCheckout = () => {
             if(!currentUser) { window.openGenericModal('auth-modal'); window.showNotification("অর্ডার করতে আগে লগইন করুন!", true); return; }
@@ -1149,23 +1178,37 @@
         function renderFullCheckoutItems() {
             const container = document.getElementById('full-checkout-items');
             let subtotal = 0;
-            container.innerHTML = cart.map(item => {
+            container.innerHTML = cart.map((item, index) => {
                 subtotal += item.price * item.quantity;
                 return `
-                    <div class="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
+                    <div class="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0 relative">
                         <img src="${item.imageUrl}" class="w-14 h-14 object-cover rounded-xl border border-gray-100 shadow-sm">
                         <div class="flex-1 min-w-0">
                             <h4 class="font-bold text-gray-800 text-sm truncate">${item.name}</h4>
                             ${item.variant ? `<div class="text-[10px] text-gray-500 font-medium">${item.variant}</div>` : ''}
-                            <div class="text-xs text-gray-500 font-medium mt-0.5">৳ ${item.price} × ${item.quantity}</div>
+                            <div class="text-xs text-gray-500 font-medium mt-0.5">৳ ${item.price}</div>
                         </div>
-                        <div class="font-black text-primary text-sm">৳ ${item.price * item.quantity}</div>
+                        
+                        <!-- FIX: Added Quantity Controls in Checkout -->
+                        <div class="flex items-center border border-gray-200 rounded-lg bg-gray-50 overflow-hidden shadow-inner mx-2">
+                            <button onclick="window.updateCartQty(${index}, -1)" class="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-200"><i class="fa-solid fa-minus text-[8px]"></i></button>
+                            <span class="w-6 text-center font-bold text-xs text-gray-800">${item.quantity}</span>
+                            <button onclick="window.updateCartQty(${index}, 1)" class="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-200"><i class="fa-solid fa-plus text-[8px]"></i></button>
+                        </div>
+
+                        <div class="font-black text-primary text-sm min-w-[50px] text-right">৳ ${item.price * item.quantity}</div>
                     </div>`;
             }).join('');
             
             document.getElementById('full-subtotal').innerText = `৳ ${subtotal}`;
             document.getElementById('full-total').innerText = `৳ ${subtotal}`;
             document.getElementById('mobile-sticky-total').innerText = `৳ ${subtotal}`;
+            
+            // If cart becomes empty during checkout, close it
+            if(cart.length === 0) {
+                window.closeFullCheckoutUI();
+                window.showNotification("আপনার কার্ট খালি হয়ে গেছে!", true);
+            }
         }
 
         window.submitFullOrder = async () => {
@@ -1262,17 +1305,18 @@
                             <img src="${(product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : product.imageUrl}" class="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
                             ${isOutOfStock ? `<div class="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10"><span class="bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg text-sm shadow-md">স্টক আউট</span></div>` : ''}
                         </div>
-                        <div class="p-3 sm:p-4 flex flex-col flex-1">
+                        <div class="p-3 sm:p-4 flex flex-col flex-1 relative">
                             <div class="text-[10px] sm:text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">${product.category || 'Category'}</div>
                             <h4 class="text-xs sm:text-sm md:text-base font-bold text-gray-800 line-clamp-2 mb-2 leading-snug">${product.name}</h4>
                             <div class="mt-auto flex justify-between items-end gap-1">
-                                <div>
+                                <div class="mb-6"> <!-- Added margin bottom to avoid overlapping with absolute button -->
                                     <div class="text-primary font-black text-sm sm:text-base md:text-lg">৳ ${product.price}</div>
                                     ${product.regularPrice ? `<div class="text-xs text-gray-400 line-through font-medium">৳ ${product.regularPrice}</div>` : ''}
                                 </div>
-                                <div class="flex items-center gap-1.5 shrink-0">
-                                    <button onclick="event.stopPropagation(); window.buyNowDirectly('${product.id}')" class="w-8 h-8 sm:w-9 sm:h-9 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-primaryHover" title="এখনই কিনুন" ${isOutOfStock ? 'disabled' : ''}><i class="fa-solid fa-bolt text-xs"></i></button>
-                                </div>
+                            </div>
+                            <!-- FIX: Absolute positioned cart icon to be under the card inside -->
+                            <div class="absolute bottom-3 right-3 shrink-0">
+                                <button onclick="event.stopPropagation(); window.buyNowDirectly('${product.id}')" class="w-8 h-8 sm:w-9 sm:h-9 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-primaryHover shadow-sm" title="এখনই কিনুন" ${isOutOfStock ? 'disabled' : ''}><i class="fa-solid fa-cart-plus text-xs"></i></button>
                             </div>
                         </div>
                     </div>`;
